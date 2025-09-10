@@ -1,6 +1,13 @@
 {
-  "java.checkstyle.configuration": "${workspaceFolder}/config/checkstyle/checkstyle.xml",
-  "java.checkstyle.version": "11.0.1",
-  "checkstyle.enabled": true,
-  "java.compile.nullAnalysis.mode": "automatic"
+    "java.checkstyle.configuration": "${workspaceFolder}/config/checkstyle/checkstyle.xml",
+    "java.checkstyle.version": "11.0.1",
+    "checkstyle.enabled": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "[java]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "editor.detectIndentation": false,
+        "editor.formatOnSave": true
+    },
+    "editor.formatOnSave": true
 }
