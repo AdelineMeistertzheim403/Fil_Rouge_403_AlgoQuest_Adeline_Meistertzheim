@@ -1,5 +1,10 @@
 package com.algoquest.api.dto;
 
-public class ReponseDTO {
+import lombok.Data;
 
+@Data
+public class ReponseDTO {
+    private String userId;
+    private String enigmeId;
+    private String codeSoumis;
 }

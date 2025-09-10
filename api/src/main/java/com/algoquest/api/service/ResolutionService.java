@@ -1,0 +1,38 @@
+package com.algoquest.api.service;
+
+import com.algoquest.api.dto.ReponseDTO;
+import com.algoquest.api.model.Enigme;
+import com.algoquest.api.model.Resolution;
+import com.algoquest.api.model.User;
+import com.algoquest.api.repository.EnigmeRepository;
+import com.algoquest.api.repository.ResolutionRepository;
+import com.algoquest.api.repository.UserRepository;
+
+public class ResolutionService {
+    private final ResolutionRepository resolutionRepository;
+    private final EnigmeRepository enigmeRepository;
+    private final UserRepository userRepository;
+
+    public ResolutionService(ResolutionRepository resolutionRepository, EnigmeRepository enigmeRepository,
+            UserRepository userRepository) {
+        this.resolutionRepository = resolutionRepository;
+        this.enigmeRepository = enigmeRepository;
+        this.userRepository = userRepository;
+    }
+
+    public Resolution createResolution(ReponseDTO dto) {
+        final Enigme enigme = enigmeRepository.findById(dto.getEnigmeId())
+                .orElseThrow(() -> new RuntimeException("Enigme introuvable"));
+        final User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
+        final boolean estCorrect = false;
+
+        final Resolution resolution = new Resolution();
+        resolution.setCodeSoumis(dto.getCodeSoumis());
+        resolution.setEstCorrecte(estCorrect);
+        resolution.setUser(user);
+        resolution.setEnigme(enigme);
+
+        return resolutionRepository.save(resolution);
+    }
+}
