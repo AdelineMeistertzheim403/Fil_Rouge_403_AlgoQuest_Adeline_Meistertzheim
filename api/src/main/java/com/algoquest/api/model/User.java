@@ -19,6 +19,6 @@ public class User {
     private String id;
     private String pseudo;
     private String email;
-    private String motDePasse;
+    private String password;
     private Role role;
 }

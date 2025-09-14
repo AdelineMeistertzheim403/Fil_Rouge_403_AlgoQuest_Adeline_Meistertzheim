@@ -1,0 +1,12 @@
+package com.algoquest.api.dto;
+
+import com.algoquest.api.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class AuthResponse {
+    private String token;
+    private User user;
+}
