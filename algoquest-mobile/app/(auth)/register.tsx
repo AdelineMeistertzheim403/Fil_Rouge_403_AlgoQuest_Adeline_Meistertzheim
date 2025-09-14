@@ -19,7 +19,7 @@ export default function RegisterScreen() {
             await AsyncStorage.setItem("token", token);
 
             Alert.alert("Inscription réussie", `Bienvenue ${user.pseudo}`);
-            router.replace("/(user)/home" as Href); // TODO : créer la page d’accueil utilisateur
+            router.replace("/(user)/enigmes/index" as Href);
         } catch (err: any) {
             console.error(err);
             Alert.alert("Erreur", "Impossible de créer le compte");
@@ -52,7 +52,7 @@ export default function RegisterScreen() {
             <Button title="S'inscrire" onPress={handleRegister} />
             <Button
                 title="Déjà un compte ? Se connecter"
-                onPress={() => router.push("/auth/login" as Href)}
+                onPress={() => router.push("./login" as Href)}
             />
         </View>
     );

@@ -14,11 +14,16 @@ export default function LoginScreen() {
         try {
             const response = await api.post("/users/login", { email, password });
             const { token, user } = await login(email, password);
+            await AsyncStorage.setItem("user", JSON.stringify(user));
 
             await AsyncStorage.setItem("token", token);
 
             Alert.alert("Connexion réussie", `Bienvenue ${user.pseudo}`);
-            router.replace("/(admin)/dashboard" as Href);
+            if (user.role === "ADMIN") {
+                router.replace("/(admin)/dashboard" as Href);
+            } else {
+                router.replace("/(user)/enigmes/listEnigme" as Href);
+            }
         } catch (err: any) {
             console.error("Erreur", 'Identifiants incorrects');
         }
@@ -44,7 +49,7 @@ export default function LoginScreen() {
             <Button title="Se connecter" onPress={handleLogin} />
             <Button
                 title="Pas de compte ? S'inscrire"
-                onPress={() => router.push("/auth/register" as Href)}
+                onPress={() => router.push("./register" as Href)}
             />
         </View>
     );
