@@ -6,11 +6,11 @@ import Logo from '../assets/images/logoAlgoQuest.svg';
 export default function Home() {
     return (
         <View style={globalStyles.container}>
-             <Logo
-  width={180}
-  height={80}
-  style={globalStyles.logo}
-/>
+            <Logo
+                width={180}
+                height={80}
+                style={globalStyles.logo}
+            />
             <Text style={globalStyles.title}>Bienvenue sur AlgoQuest</Text>
             <TouchableOpacity style={globalStyles.button}>
                 <Text

@@ -8,44 +8,41 @@ import { LinearGradient } from 'expo-linear-gradient'
 export default function Dashboard() {
     return (
         <View style={globalStyles.container}>
-             <Logo
-  width={180}
-  height={80}
-  style={globalStyles.logo}
-/>
+            <Logo
+                width={180}
+                height={80}
+                style={globalStyles.logo}
+            />
             <Text style={globalStyles.title}>Tableau de bord Admin</Text>
             <TouchableOpacity style={globalStyles.button}>
-                <Text style={globalStyles.buttonText}>Liste des énigmes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity  style={globalStyles.button}>
-                 <LinearGradient
-                        colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={globalStyles.gradientButton}
-                    >
-                        <Text style={globalStyles.buttonText}>Gérer les utilisateur</Text>
-                    </LinearGradient>
+                <LinearGradient
+                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={globalStyles.gradientButton}
+                >
+                    <Text style={globalStyles.buttonText}>Gérer les utilisateur</Text>
+                </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity style={globalStyles.button}>
-                 <LinearGradient
-                        colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={globalStyles.gradientButton}
-                    >
-                        <Text style={globalStyles.buttonText}>Liste des énigmes</Text>
-                    </LinearGradient>
+                <LinearGradient
+                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={globalStyles.gradientButton}
+                >
+                    <Text style={globalStyles.buttonText}>Liste des énigmes</Text>
+                </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(admin)/create-enigme')} style={globalStyles.button}>
-                 <LinearGradient
-                        colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={globalStyles.gradientButton}
-                    >
-                        <Text style={globalStyles.buttonText}>Créer une nouvelle énigme</Text>
-                    </LinearGradient>
+                <LinearGradient
+                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={globalStyles.gradientButton}
+                >
+                    <Text style={globalStyles.buttonText}>Créer une nouvelle énigme</Text>
+                </LinearGradient>
             </TouchableOpacity>
         </View>
     )
