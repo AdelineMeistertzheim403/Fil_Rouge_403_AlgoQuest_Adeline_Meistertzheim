@@ -1,62 +1,74 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter, Href } from "expo-router";
-import { api } from "../../src/api/client";
-import { login } from "@/services/userService";
+import React, { useState } from 'react'
+import { useRouter, Href } from 'expo-router'
+import {
+    View,
+    Text,
+    TextInput,
+    Alert,
+    Image,
+    TouchableOpacity,
+} from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { api } from '../../src/api/client'
+import { login } from '@/services/userService'
+import { globalStyles } from '@/src/styles/globalStyles'
+import Logo from '../../assets/images/logoAlgoQuest.svg';
 
 export default function LoginScreen() {
     const router = useRouter();
-    const [email, setEmail] = useState("");
-    const [password, setpassword] = useState("");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
         try {
-            const response = await api.post("/users/login", { email, password });
-            const { token, user } = await login(email, password);
-            await AsyncStorage.setItem("user", JSON.stringify(user));
+            const response = await api.post('/users/login', { email, password })
+            const { token, user } = await login(email, password)
+            await AsyncStorage.setItem('user', JSON.stringify(user))
 
-            await AsyncStorage.setItem("token", token);
+            await AsyncStorage.setItem('token', token)
 
-            Alert.alert("Connexion réussie", `Bienvenue ${user.pseudo}`);
-            if (user.role === "ADMIN") {
-                router.replace("/(admin)/dashboard" as Href);
+            Alert.alert('Connexion réussie', `Bienvenue ${user.pseudo}`)
+            if (user.role === 'ADMIN') {
+                router.replace('/(admin)/dashboard' as Href)
             } else {
-                router.replace("/(user)/enigmes/listEnigme" as Href);
+                router.replace('/(user)/enigmes/listEnigme' as Href)
             }
         } catch (err: any) {
-            console.error("Erreur", 'Identifiants incorrects');
+            console.error('Erreur', 'Identifiants incorrects')
         }
-    };
+    }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Connexion</Text>
+        <View style={globalStyles.container}>
+            <Logo width={120} height={60} />
+            <Text style={globalStyles.title}>Connexion</Text>
             <TextInput
-                style={styles.input}
+                style={globalStyles.input}
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
             />
             <TextInput
-                style={styles.input}
+                style={globalStyles.input}
                 placeholder="Mot de passe"
                 value={password}
-                onChangeText={setpassword}
+                onChangeText={setPassword}
                 secureTextEntry
             />
-            <Button title="Se connecter" onPress={handleLogin} />
-            <Button
-                title="Pas de compte ? S'inscrire"
-                onPress={() => router.push("./register" as Href)}
-            />
+            <TouchableOpacity style={globalStyles.button}>
+                <Text style={globalStyles.buttonText} onPress={handleLogin}>
+                    Se connecter
+                </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={globalStyles.button}>
+                <Text
+                    style={globalStyles.buttonText}
+                    onPress={() => router.push('./register' as Href)}
+                >
+                    Pas de compte ? S'inscrire
+                </Text>
+            </TouchableOpacity>
         </View>
-    );
+    )
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", padding: 20 },
-    title: { fontSize: 24, fontWeight: "bold", marginBottom: 20, textAlign: "center" },
-    input: { borderWidth: 1, borderColor: "#ccc", padding: 10, marginBottom: 10, borderRadius: 5 },
-});
