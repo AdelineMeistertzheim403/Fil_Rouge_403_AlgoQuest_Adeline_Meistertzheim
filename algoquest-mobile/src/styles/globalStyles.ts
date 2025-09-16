@@ -34,7 +34,6 @@ export const globalStyles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-        backgroundColor: '#444',
         width: '100%',
         padding: 15,
         borderRadius: 10,
@@ -43,7 +42,24 @@ export const globalStyles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontWeight: '700',
+        fontWeight: 'bold',
         fontSize: 16,
     },
+   rowButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+},
+gradientButton: {
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+},
+label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#0F2740",
+    marginBottom: 5,
+    marginTop: 10,
+},
 })

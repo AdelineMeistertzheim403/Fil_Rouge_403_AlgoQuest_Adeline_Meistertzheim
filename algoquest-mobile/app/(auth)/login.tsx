@@ -40,7 +40,11 @@ export default function LoginScreen() {
 
     return (
         <View style={globalStyles.container}>
-            <Logo width={120} height={60} />
+             <Logo
+  width={180}
+  height={80}
+  style={globalStyles.logo}
+/>
             <Text style={globalStyles.title}>Connexion</Text>
             <TextInput
                 style={globalStyles.input}
