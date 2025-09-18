@@ -20,5 +20,8 @@
   },
   "devDependencies": {
     "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "expo": "^54.0.0"
   }
 }

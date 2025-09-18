@@ -1,4 +1,0 @@
-{
-  "java.checkstyle.configuration": "config/checkstyle/checkstyle.xml",
-  "java.checkstyle.enabled": true
-}
