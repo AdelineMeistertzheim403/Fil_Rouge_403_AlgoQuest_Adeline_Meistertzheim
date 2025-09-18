@@ -34,7 +34,7 @@ export const globalStyles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-        backgroundColor: "white",
+        backgroundColor: "#0F2740",
         width: '100%',
         padding: 15,
         borderRadius: 10,
@@ -52,9 +52,10 @@ export const globalStyles = StyleSheet.create({
         marginTop: 20,
     },
     gradientButton: {
-        padding: 12,
-        borderRadius: 8,
-        alignItems: "center",
+        padding: 15,
+        borderRadius: 10,
+        alignItems: 'center',
+        marginTop: 10,
     },
     label: {
         fontSize: 16,

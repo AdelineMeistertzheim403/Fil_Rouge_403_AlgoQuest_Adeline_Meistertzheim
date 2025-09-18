@@ -14,7 +14,7 @@ export default function Dashboard() {
                 style={globalStyles.logo}
             />
             <Text style={globalStyles.title}>Tableau de bord Admin</Text>
-            <TouchableOpacity style={globalStyles.button}>
+            <TouchableOpacity>
                 <LinearGradient
                     colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
                     start={{ x: 0, y: 0 }}
@@ -24,7 +24,7 @@ export default function Dashboard() {
                     <Text style={globalStyles.buttonText}>Gérer les utilisateur</Text>
                 </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity style={globalStyles.button}>
+            <TouchableOpacity>
                 <LinearGradient
                     colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
                     start={{ x: 0, y: 0 }}
@@ -34,7 +34,7 @@ export default function Dashboard() {
                     <Text style={globalStyles.buttonText}>Liste des énigmes</Text>
                 </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/(admin)/create-enigme')} style={globalStyles.button}>
+            <TouchableOpacity onPress={() => router.push('/(admin)/create-enigme')} >
                 <LinearGradient
                     colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
                     start={{ x: 0, y: 0 }}
