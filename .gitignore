@@ -1,0 +1,45 @@
+# === GLOBAL PROJECT ===
+.DS_Store
+.env
+.env.*.local
+*.log
+node_modules/
+*.swp
+
+# === VS CODE ===
+.vscode/
+
+# === API BACKEND (Spring Boot - Maven - Java) ===
+api/target/
+api/.classpath
+api/.project
+api/.settings/
+api/.idea/
+api/.factorypath
+api/.apt_generated
+api/.mvn/wrapper/maven-wrapper.jar
+api/.springBeans
+api/.sts4-cache
+api/HELP.md
+api/build/
+
+# === EXPO MOBILE FRONTEND (React Native) ===
+algoquest-mobile/node_modules/
+algoquest-mobile/.expo/
+algoquest-mobile/.expo-shared/
+algoquest-mobile/.vscode/
+algoquest-mobile/dist/
+algoquest-mobile/web-build/
+algoquest-mobile/ios/
+algoquest-mobile/android/
+algoquest-mobile/.idea/
+algoquest-mobile/.DS_Store
+algoquest-mobile/package-lock.json
+
+# Ignore SQLite local DB if used
+algoquest-mobile/*.db
+algoquest-mobile/*.sqlite
+
+# Metro bundler cache
+.expo/
+.expo-shared/
