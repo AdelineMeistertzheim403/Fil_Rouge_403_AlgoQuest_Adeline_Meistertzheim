@@ -1,6 +1,7 @@
 package com.algoquest.api.controller;
 
 import com.algoquest.api.dto.UserDTO;
+import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.service.UserService;
 import com.algoquest.api.dto.LoginRequest;
@@ -8,6 +9,7 @@ import com.algoquest.api.dto.AuthResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -73,5 +76,16 @@ public class UserController {
         return userService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<User> updateUserRole(
+            @PathVariable String id,
+            @RequestBody Map<String, String> updates) {
+
+        final String newRoleStr = updates.get("role");
+        final Role newRole = Role.valueOf(newRoleStr.toUpperCase());
+        final User updatedUser = userService.updateRole(id, newRole);
+        return ResponseEntity.ok(updatedUser);
     }
 }
