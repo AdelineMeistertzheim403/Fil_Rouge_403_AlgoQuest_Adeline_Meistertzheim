@@ -63,12 +63,6 @@ public class UserController {
         return ResponseEntity.status(401).build();
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        final User created = userService.create(user);
-        return ResponseEntity.ok(created);
-    }
-
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.findAll());
