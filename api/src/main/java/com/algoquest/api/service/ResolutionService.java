@@ -31,7 +31,7 @@ public class ResolutionService {
                 .orElseThrow(() -> new RuntimeException("Enigme introuvable"));
         final User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
-        final boolean estCorrect = false;
+        final boolean estCorrect = true;
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());
