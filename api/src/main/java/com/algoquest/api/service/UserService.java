@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.algoquest.api.dto.UserDTO;
+import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.repository.UserRepository;
 
@@ -65,5 +66,12 @@ public class UserService {
             return userRepository.findById(userId);
         }
         return Optional.empty();
+    }
+
+    public User updateRole(String id, Role newRole) {
+        final User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setRole(newRole);
+        return userRepository.save(user);
     }
 }
