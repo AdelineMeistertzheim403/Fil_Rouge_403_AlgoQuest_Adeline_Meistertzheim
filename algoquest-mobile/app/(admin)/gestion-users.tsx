@@ -17,7 +17,7 @@ type User = {
 export default function Gestion_users() {
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState(true)
-    const currentUserId = "68cc1a7e244501cf3a0a9969";
+    const currentUserId = '68cc1a7e244501cf3a0a9969'
     const [userRoles, setUserRoles] = useState<{ [id: string]: string }>({})
 
     // Récupération des utilisateurs depuis l’API
@@ -34,20 +34,20 @@ export default function Gestion_users() {
         }
 
         fetchUsers()
-    }, []);
+    }, [])
 
     const updateUserRole = async (userId: string, newRole: string) => {
-    try {
-      await api.patch(`/users/users/${userId}`, { role: newRole });
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === userId ? { ...u, role: newRole } : u
-        )
-      );
-    } catch (error) {
-      console.error("Erreur modification role:", error);
+        try {
+            await api.patch(`/users/users/${userId}`, { role: newRole })
+            setUsers((prev) =>
+                prev.map((u) =>
+                    u.id === userId ? { ...u, role: newRole } : u,
+                ),
+            )
+        } catch (error) {
+            console.error('Erreur modification role:', error)
+        }
     }
-  };
 
     if (loading) {
         return (
@@ -78,36 +78,46 @@ export default function Gestion_users() {
                         <Text>Pseudo : {item.pseudo}</Text>
                         <Text>Email : {item.email}</Text>
                         {item.id !== currentUserId ? (
-                        <Picker
-                            selectedValue={item.role}
-                onValueChange={(newRole) => updateUserRole(item.id, newRole)}
-                style={{ height: 50, width: 150 }}
-                        >
-                            <Picker.Item label="Admin" value="ADMIN" />
-                            <Picker.Item label="Utilisateur" value="UTILISATEUR" />
-                        </Picker>
+                            <Picker
+                                selectedValue={item.role}
+                                onValueChange={(newRole) =>
+                                    updateUserRole(item.id, newRole)
+                                }
+                                style={{ height: 50, width: 150 }}
+                            >
+                                <Picker.Item label="Admin" value="ADMIN" />
+                                <Picker.Item
+                                    label="Utilisateur"
+                                    value="UTILISATEUR"
+                                />
+                            </Picker>
                         ) : (
-              <Text style={{ color: "red", marginTop: 5 }}>
-                { item.role }
-              </Text>
-            )}
+                            <Text style={{ color: 'red', marginTop: 5 }}>
+                                {item.role}
+                            </Text>
+                        )}
 
                         {/* Bouton suivre progression */}
-                        <TouchableOpacity
-                            //onPress={() => router.push(`/progression/${item.id}`)}
-                            style={{
-                                backgroundColor: '#5DADE2',
-                                padding: 10,
-                                marginTop: 5,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text
-                                style={{ color: '#fff', textAlign: 'center' }}
+                        {item.role === 'UTILISATEUR' && (
+                            <TouchableOpacity
+                                onPress={() => router.push(`/progression/${item.id}`)}
+                                style={{
+                                    backgroundColor: '#5DADE2',
+                                    padding: 10,
+                                    marginTop: 5,
+                                    borderRadius: 5,
+                                }}
                             >
-                                Suivre progression
-                            </Text>
-                        </TouchableOpacity>
+                                <Text
+                                    style={{
+                                        color: '#fff',
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    Suivre progression
+                                </Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 )}
             />
