@@ -14,7 +14,7 @@ export default function Dashboard() {
                 style={globalStyles.logo}
             />
             <Text style={globalStyles.title}>Tableau de bord Admin</Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(admin)/gestion-users')}>
                 <LinearGradient
                     colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
                     start={{ x: 0, y: 0 }}
