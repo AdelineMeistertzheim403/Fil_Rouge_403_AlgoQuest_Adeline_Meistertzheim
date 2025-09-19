@@ -3,14 +3,10 @@ import {
     View,
     Text,
     TextInput,
-    Alert,
-    Image,
     TouchableOpacity,
 } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useRouter, Href } from 'expo-router'
 import { api } from '../../src/api/client'
-import { login } from '@/services/userService'
 import { globalStyles } from '../../src/styles/globalStyles'
 import Toast from 'react-native-toast-message'
 import Logo from '../../assets/images/logoAlgoQuest.svg'

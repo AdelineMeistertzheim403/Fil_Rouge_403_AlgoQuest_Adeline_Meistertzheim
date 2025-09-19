@@ -22,6 +22,8 @@
     "prettier": "^3.6.2"
   },
   "dependencies": {
-    "expo": "^54.0.0"
+    "@react-native-picker/picker": "2.11.1",
+    "expo": "^54.0.0",
+    "react-native-picker": "^4.3.7"
   }
 }
