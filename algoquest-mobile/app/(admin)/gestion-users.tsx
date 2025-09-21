@@ -6,6 +6,7 @@ import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { LinearGradient } from 'expo-linear-gradient'
 import { api } from '../../src/api/client'
 import { Picker } from '@react-native-picker/picker'
+import { useAuth } from '@/src/context/AuthContext'
 
 type User = {
     id: string
@@ -17,7 +18,8 @@ type User = {
 export default function Gestion_users() {
     const [users, setUsers] = useState<User[]>([])
     const [loading, setLoading] = useState(true)
-    const currentUserId = '68cc1a7e244501cf3a0a9969'
+    const { user } = useAuth()
+    const currentUserId = user?.id
     const [userRoles, setUserRoles] = useState<{ [id: string]: string }>({})
 
     // Récupération des utilisateurs depuis l’API
