@@ -85,7 +85,7 @@ export default function RegisterScreen() {
     {/* Bouton Valider */}
     <TouchableOpacity onPress={handleEnregistrerEnigme} style={{ flex: 1, marginHorizontal: 5 }}>
         <LinearGradient
-            colors={['#4CAF50', '#2E7D32']} // vert clair -> vert foncé
+            colors={['#4CAF50', '#2E7D32']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={globalStyles.gradientButton}
@@ -97,7 +97,7 @@ export default function RegisterScreen() {
     {/* Bouton Retour */}
     <TouchableOpacity onPress={() => router.push('/(admin)/dashboard')} style={{ flex: 1, marginHorizontal: 5 }}>
         <LinearGradient
-            colors={['#FF5252', '#B71C1C']} // rouge clair -> rouge foncé
+            colors={['#FF5252', '#B71C1C']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={globalStyles.gradientButton}

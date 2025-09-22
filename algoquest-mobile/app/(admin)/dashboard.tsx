@@ -1,7 +1,7 @@
 // app/(admin)/dashboard.tsx
 import { globalStyles } from '@/src/styles/globalStyles'
 import { router } from 'expo-router'
-import { View, Text, Button, Image, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import Logo from '../../assets/images/logoAlgoQuest.svg';
 import { LinearGradient } from 'expo-linear-gradient'
 
@@ -16,7 +16,7 @@ export default function Dashboard() {
             <Text style={globalStyles.title}>Tableau de bord Admin</Text>
             <TouchableOpacity onPress={() => router.push('/(admin)/gestion-users')}>
                 <LinearGradient
-                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    colors={['#5DADE2', '#00008B']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={globalStyles.gradientButton}
@@ -26,7 +26,7 @@ export default function Dashboard() {
             </TouchableOpacity>
             <TouchableOpacity>
                 <LinearGradient
-                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    colors={['#5DADE2', '#00008B']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={globalStyles.gradientButton}
@@ -36,7 +36,7 @@ export default function Dashboard() {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(admin)/create-enigme')} >
                 <LinearGradient
-                    colors={['#5DADE2', '#00008B']} // vert clair -> vert foncé
+                    colors={['#5DADE2', '#00008B']}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={globalStyles.gradientButton}
