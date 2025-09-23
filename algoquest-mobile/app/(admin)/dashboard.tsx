@@ -24,7 +24,7 @@ export default function Dashboard() {
                     <Text style={globalStyles.buttonText}>Gérer les utilisateur</Text>
                 </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/(admin)/liste-enigmes')}>
                 <LinearGradient
                     colors={['#5DADE2', '#00008B']}
                     start={{ x: 0, y: 0 }}
