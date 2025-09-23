@@ -5,7 +5,6 @@ import { View, Text, TouchableOpacity, FlatList } from 'react-native'
 import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { LinearGradient } from 'expo-linear-gradient'
 import { api } from '../../src/api/client'
-import { Picker } from '@react-native-picker/picker'
 import { useAuth } from '@/src/context/AuthContext'
 
 type Enigmes = {
@@ -60,15 +59,17 @@ export default function Liste_enigmes() {
                             borderRadius: 8,
                         }}
                     >
-                        <Text>Titre : {item.titre}</Text>
+                        <Text style={globalStyles.label}>{item.titre}</Text>
 
                             <TouchableOpacity
+                                onPress={() => router.push(`/detail-enigme/${item.id}`)}
                                 style={{
                                     backgroundColor: '#5DADE2',
                                     padding: 10,
                                     marginTop: 5,
                                     borderRadius: 5,
                                 }}
+
                             >
                                 <Text
                                     style={{
