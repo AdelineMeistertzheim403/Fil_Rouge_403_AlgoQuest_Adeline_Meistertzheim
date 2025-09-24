@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/enigmes")
+@RequestMapping("api/v1/enigmes")
 public class EnigmeController {
 
     @Autowired

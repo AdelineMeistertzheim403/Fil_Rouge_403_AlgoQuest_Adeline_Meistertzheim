@@ -9,6 +9,7 @@ import com.algoquest.api.repository.EnigmeRepository;
 import com.algoquest.api.repository.ResolutionRepository;
 import com.algoquest.api.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class ResolutionService {
         resolution.setEstCorrecte(estCorrect);
         resolution.setUser(user);
         resolution.setEnigme(enigme);
+        resolution.setDateSoumission(LocalDateTime.now());
 
         return resolutionRepository.save(resolution);
     }
@@ -53,6 +55,7 @@ public class ResolutionService {
         dto.setEstCorrecte(resolution.isEstCorrecte());
         dto.setUserId(resolution.getUser().getId());
         dto.setEnigmeId(resolution.getEnigme().getId());
+        dto.setDateSoumission(resolution.getDateSoumission());
         return dto;
     }
 }

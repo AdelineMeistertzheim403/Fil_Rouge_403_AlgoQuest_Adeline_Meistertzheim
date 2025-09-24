@@ -1,5 +1,7 @@
 package com.algoquest.api.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 @Data
@@ -9,4 +11,5 @@ public class ResolutionDTO {
     private boolean estCorrecte;
     private String userId;
     private String enigmeId;
+    private LocalDateTime dateSoumission;
 }

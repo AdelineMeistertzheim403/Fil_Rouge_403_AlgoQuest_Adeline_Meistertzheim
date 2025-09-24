@@ -17,7 +17,7 @@ import com.algoquest.api.model.Resolution;
 import com.algoquest.api.service.ResolutionService;
 
 @RestController
-@RequestMapping("/resolutions")
+@RequestMapping("api/v1/resolutions")
 public class ResolutionController {
 
     private final ResolutionService resolutionService;
