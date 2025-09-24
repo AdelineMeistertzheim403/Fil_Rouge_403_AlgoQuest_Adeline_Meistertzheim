@@ -22,6 +22,7 @@ public class Resolution {
 
     private String codeSoumis;
     private boolean estCorrecte;
+    private StatusResolution status;
 
     private LocalDateTime dateSoumission;
 
