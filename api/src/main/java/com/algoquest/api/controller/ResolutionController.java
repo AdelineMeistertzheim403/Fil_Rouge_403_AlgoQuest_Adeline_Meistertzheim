@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.algoquest.api.dto.ReponseDTO;
 import com.algoquest.api.dto.ResolutionDTO;
 import com.algoquest.api.model.Resolution;
+import com.algoquest.api.model.StatusResolution;
 import com.algoquest.api.service.ResolutionService;
 
 @RestController
-@RequestMapping("/resolutions")
+@RequestMapping("api/v1/resolutions")
 public class ResolutionController {
 
     private final ResolutionService resolutionService;
@@ -37,5 +38,13 @@ public class ResolutionController {
     public ResponseEntity<List<Resolution>> getResolutionsByUserId(@PathVariable String userId) {
         final List<Resolution> resolutions = resolutionService.getResolutionsByUserId(userId);
         return ResponseEntity.ok(resolutions);
+    }
+
+    @GetMapping("/user/{userId}/enigme/{enigmeId}/status")
+    public ResponseEntity<StatusResolution> getStatus(
+            @PathVariable final String userId,
+            @PathVariable final String enigmeId) {
+        final StatusResolution status = resolutionService.getStatutResolution(userId, enigmeId);
+        return ResponseEntity.ok(status);
     }
 }

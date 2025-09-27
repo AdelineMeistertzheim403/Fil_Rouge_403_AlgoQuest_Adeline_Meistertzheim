@@ -7,7 +7,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 type Resolution = {
   id: string;
-  estCorrecte: boolean;
+  status: "A_FAIRE" | "ECHEC" | "REUSSI";
+  dateSoumission: string;
   enigme: {
     id: string;
     titre: string;
@@ -49,8 +50,19 @@ export default function Progression() {
           <View style={{ marginVertical: 10, padding: 10, borderWidth: 1, borderRadius: 8 }}>
             <Text>{item.enigme.titre}</Text>
             <Text>
-              {item.estCorrecte  ? "✅ Réussi" : "🕓 À faire"}
-            </Text>
+  {new Date(item.dateSoumission).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  })}
+</Text>
+            <Text>
+  {item.status === "REUSSI" && "✅ Réussi"}
+  {item.status === "ECHEC" && "❌ Échec"}
+  {item.status === "A_FAIRE" && "🕓 À faire"}
+</Text>
           </View>
         )}
       />
