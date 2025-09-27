@@ -5,6 +5,8 @@ export default function AdminLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="dashboard" />
       <Stack.Screen name="create-enigme" />
+      <Stack.Screen name="gestion-users" />
+      <Stack.Screen name="liste-enigmes" />
     </Stack>
   );
 }
