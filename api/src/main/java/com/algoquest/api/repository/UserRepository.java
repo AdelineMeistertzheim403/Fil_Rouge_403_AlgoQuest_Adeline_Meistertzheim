@@ -1,5 +1,6 @@
 package com.algoquest.api.repository;
 
+import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 
 import java.util.Optional;
@@ -18,4 +19,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByEmailAndPassword(String email, String password);
 
     Optional<User> findByEmail(String email);
+
+    boolean existsByRole(Role role);
 }

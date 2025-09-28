@@ -86,4 +86,8 @@ public class UserService {
         user.setRole(newRole);
         return userRepository.save(user);
     }
+
+    public boolean existsAdmin() {
+        return userRepository.existsByRole(Role.ADMIN);
+    }
 }

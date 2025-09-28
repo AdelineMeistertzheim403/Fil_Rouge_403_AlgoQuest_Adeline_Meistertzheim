@@ -90,4 +90,19 @@ public class UserController {
         final User updatedUser = userService.updateRole(id, newRole);
         return ResponseEntity.ok(updatedUser);
     }
+
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> createAdmin(@RequestBody User user) {
+        if (userService.existsAdmin()) {
+            return ResponseEntity.status(403).body("Un administrateur existe déjà !");
+        }
+
+        // on force le rôle ADMIN
+        user.setRole(Role.ADMIN);
+
+        final User created = userService.create(user);
+        final String token = userService.generateToken(created);
+
+        return ResponseEntity.ok(new AuthResponse(token, created));
+    }
 }
