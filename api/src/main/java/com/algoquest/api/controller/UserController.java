@@ -43,8 +43,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        final Optional<User> userOpt = userService.findByEmailAndpassword(loginRequest.getEmail(),
+        final Optional<User> userOpt = userService.findByEmailAndPassword(
+                loginRequest.getEmail(),
                 loginRequest.getPassword());
+
         if (userOpt.isPresent()) {
             final User user = userOpt.get();
             final String token = userService.generateToken(user);
