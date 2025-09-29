@@ -29,8 +29,10 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             final String token = header.substring(7);
             userService.findByToken(token).ifPresent(user -> {
-                final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.getEmail(),
-                        null, List.of());
+                final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        user.getEmail(),
+                        null,
+                        List.of(() -> "ROLE_" + user.getRole().name()));
                 SecurityContextHolder.getContext().setAuthentication(auth);
             });
         }
