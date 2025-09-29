@@ -43,8 +43,10 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        final Optional<User> userOpt = userService.findByEmailAndpassword(loginRequest.getEmail(),
+        final Optional<User> userOpt = userService.findByEmailAndPassword(
+                loginRequest.getEmail(),
                 loginRequest.getPassword());
+
         if (userOpt.isPresent()) {
             final User user = userOpt.get();
             final String token = userService.generateToken(user);
@@ -87,5 +89,20 @@ public class UserController {
         final Role newRole = Role.valueOf(newRoleStr.toUpperCase());
         final User updatedUser = userService.updateRole(id, newRole);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> createAdmin(@RequestBody User user) {
+        if (userService.existsAdmin()) {
+            return ResponseEntity.status(403).body("Un administrateur existe déjà !");
+        }
+
+        // on force le rôle ADMIN
+        user.setRole(Role.ADMIN);
+
+        final User created = userService.create(user);
+        final String token = userService.generateToken(created);
+
+        return ResponseEntity.ok(new AuthResponse(token, created));
     }
 }

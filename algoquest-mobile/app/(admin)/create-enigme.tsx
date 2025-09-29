@@ -11,6 +11,7 @@ import { globalStyles } from '../../src/styles/globalStyles'
 import Toast from 'react-native-toast-message'
 import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { LinearGradient } from 'expo-linear-gradient'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterScreen() {
     const router = useRouter()
@@ -21,12 +22,17 @@ export default function RegisterScreen() {
 
     const handleEnregistrerEnigme = async () => {
         try {
+            const token = await AsyncStorage.getItem('authToken');
             const response = await api.post('/enigmes', {
-                titre,
-                enonce,
-                entree,
-                sortieAttendue,
-            })
+            titre,
+            enonce,
+            entree,
+            sortieAttendue,
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
 
             Toast.show({
                 type: 'success',
