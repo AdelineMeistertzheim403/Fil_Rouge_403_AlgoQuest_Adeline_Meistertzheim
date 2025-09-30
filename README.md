@@ -34,14 +34,14 @@ Créer une application éducative permettant à des utilisateurs de s’exercer 
 ### Contenu du fichier ./mongo-init/init-user.js
 
 ``` db = db.getSiblingDB('algoquestdb'); ``` <br>
-``` db.createUser({ ```
-```    user: 'algoquest_user', ```
-```   pwd: 'securepassword', ```
-```   roles: [ ```
-```       { ```
-```           role: 'readWrite', ```
-```           db: 'algoquestdb' ```
-```        } ```
-```   ] ```
-``` }); ```
+``` db.createUser({ ```<br>
+```    user: 'algoquest_user', ```<br>
+```   pwd: 'securepassword', ```<br>
+```   roles: [ ```<br>
+```       { ```<br>
+```           role: 'readWrite', ```<br>
+```           db: 'algoquestdb' ```<br>
+```        } ```<br>
+```   ] ```<br>
+``` }); ```<br>
 
