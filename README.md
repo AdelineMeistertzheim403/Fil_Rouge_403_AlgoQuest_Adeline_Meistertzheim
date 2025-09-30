@@ -6,8 +6,9 @@ Créer une application éducative permettant à des utilisateurs de s’exercer 
 
 ## Utilisateurs et rôles
 
-    Utilisateur : Résout les énignes proposées, voit sa progression et son score
-
-    Admin : Crée, modifie et valide les énignes(proposée par les contributeurs si le rôle existe), gére les utilisateurs et suit la progression des utilisateurs
-
-    Contributeur(optionnel) : Un utilisateur qui peut proposer de nouvelles énigmes à valider par l’admin
+- **Utilisateur** : 
+    - Résout les énignes proposées, voit sa progression et son score
+- **Admin** : 
+    - Crée, modifie et valide les énignes(proposée par les contributeurs si le rôle existe), gére les utilisateurs et suit la progression des utilisateurs
+- **Contributeur(optionnel)** : 
+    - Un utilisateur qui peut proposer de nouvelles énigmes à valider par l’admin
