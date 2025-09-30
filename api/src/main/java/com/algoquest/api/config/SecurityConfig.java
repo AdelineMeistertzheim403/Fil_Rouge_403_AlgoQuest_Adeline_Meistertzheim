@@ -2,7 +2,7 @@ package com.algoquest.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,6 +26,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/users/register", "/api/v1/users/login").permitAll()
                 .requestMatchers("/api/v1/users/create-admin").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/resolutions").authenticated()
                 .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
             )
