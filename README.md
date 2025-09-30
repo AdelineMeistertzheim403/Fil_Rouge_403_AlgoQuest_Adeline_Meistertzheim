@@ -61,11 +61,11 @@ Créer une application éducative permettant à des utilisateurs de s’exercer 
 - Avec postman créer un admin en utilisant la route suivante ``` http://localhost:8080/api/v1/users/create-admin ```
 - Choisir la methode POST
 - Dans l'onglet Body , séléctionner JSON et saisir le JSON suivant : 
-    - { 
-        "pseudo" : "le pseudo admin" 
-        "email" : "l'email de l'admin"
-        "password" : "le mot de passe admin"
-    }
+    - { <br>
+        "pseudo" : "le pseudo admin",<br>
+        "email" : "l'email de l'admin",<br>
+        "password" : "le mot de passe admin"<br>
+    }<br>
 - Cette route n'est accessible qu'une seule fois si aucun admin existe en bdd
 
 ## Lancement du front end
