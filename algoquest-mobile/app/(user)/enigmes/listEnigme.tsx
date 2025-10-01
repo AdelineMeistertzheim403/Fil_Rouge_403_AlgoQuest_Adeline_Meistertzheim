@@ -107,28 +107,41 @@ export default function Liste_enigmes() {
                     >
                         <Text style={globalStyles.label}>{item.titre}</Text>
 
-                        <TouchableOpacity
-                            onPress={() => router.push(`/enigmes/${item.id}`)}
-                            style={{
-                                backgroundColor: getButtonColor(item.status),
-                                padding: 10,
-                                marginTop: 5,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color: '#fff',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                {item.status === 'REUSSI'
-                                    ? 'Réussi'
-                                    : item.status === 'ECHEC'
-                                      ? 'Echec'
-                                      : 'A faire'}
-                            </Text>
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+    {/* Bouton statut */}
+    <TouchableOpacity
+      onPress={() => router.push(`/enigmes/${item.id}`)}
+      style={{
+        flex: 1,
+        backgroundColor: getButtonColor(item.status),
+        padding: 10,
+        borderRadius: 5,
+        marginRight: 5,
+      }}
+    >
+      <Text style={{ color: "#fff", textAlign: "center" }}>
+        {item.status === "REUSSI"
+          ? "Réussi"
+          : item.status === "ECHEC"
+          ? "Échec"
+          : "À faire"}
+      </Text>
+    </TouchableOpacity>
+
+    {/* Bouton historique */}
+    <TouchableOpacity
+      onPress={() => router.push(`/enigmes/historique/${item.id}`)}
+      style={{
+        flex: 1,
+        backgroundColor: "#8e44ad", // violet pour différencier
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: 5,
+      }}
+    >
+      <Text style={{ color: "#fff", textAlign: "center" }}>Historique</Text>
+    </TouchableOpacity>
+  </View>
                     </View>
                 )}
             />
