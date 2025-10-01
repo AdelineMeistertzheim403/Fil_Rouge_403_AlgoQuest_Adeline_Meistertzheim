@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { View, Text, TouchableOpacity, Button } from 'react-native'
 import { api } from '@/src/api/client'
 import { globalStyles } from '@/src/styles/globalStyles'
@@ -16,23 +16,26 @@ type Enigme = {
 }
 
 export default function DetailEnigme() {
-  const { id } = useLocalSearchParams() // récupère l'id depuis l'URL
+  const { id } = useLocalSearchParams()
   const [enigme, setEnigme] = useState<Enigme | null>(null)
   const { user } = useAuth()
   const currentUserId = user?.id
   const [loading, setLoading] = useState(true)
-  const [code, setCode] = useState(`public class Main {
+  const initialCode = `public class Main {
     public static void main(String[] args) {
         System.out.println("Hello world");
     }
-}`)
+}`
+
+const webviewRef = useRef<any>(null)
+  const codeRef = useRef<string>("")
 
   const submitCode = async () => {
     try {
       const response = await api.post(`/resolutions`, {
         userId: currentUserId,
         enigmeId: id,
-        codeSoumis: code,
+        codeSoumis: codeRef.current, // récupère le code actuel
       })
       console.log("Résultat:", response.data)
     } catch (err) {
@@ -72,13 +75,14 @@ export default function DetailEnigme() {
         </style>
       </head>
       <body>
-        <textarea id="editor">${code}</textarea>
+        <textarea id="editor"></textarea>
         <script>
           var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             lineNumbers: true,
             mode: "text/x-java",
             theme: "default"
           });
+          editor.setValue(${JSON.stringify(initialCode)});
           editor.on("change", function(cm) {
             window.ReactNativeWebView.postMessage(cm.getValue());
           });
@@ -111,11 +115,12 @@ export default function DetailEnigme() {
       {/* Éditeur CodeMirror via WebView */}
       <View style={{ flex: 1, borderWidth: 1, marginVertical: 10 }}>
         <WebView
+          ref={webviewRef}
           originWhitelist={['*']}
           source={{ html: editorHtml }}
           javaScriptEnabled
           onMessage={(event) => {
-            setCode(event.nativeEvent.data) // met à jour le state avec le code saisi
+            codeRef.current = event.nativeEvent.data // stocke sans déclencher rerender
           }}
         />
       </View>

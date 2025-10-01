@@ -16,6 +16,7 @@ type Enigmes = {
 type Resolution = {
   id: string
   status: 'ECHEC' | 'REUSSI'
+  dateSoumission: string
   enigme: {
     id: string
     titre: string
@@ -37,9 +38,9 @@ export default function Liste_enigmes() {
                 )
                 const resolutions = resolutionsResponse.data
                 const merged: Enigmes[] = response.data.map((enigme) => {
-                    const resolution = resolutions.find(
-                        (r) => r.enigme.id === enigme.id,
-                    )
+                    const resolution = resolutions
+  .filter((r) => r.enigme.id === enigme.id)
+  .sort((a, b) => (a.dateSoumission < b.dateSoumission ? 1 : -1))[0];
                     return {
                         ...enigme,
                         status: (resolution ? resolution.status : 'A_FAIRE') as
