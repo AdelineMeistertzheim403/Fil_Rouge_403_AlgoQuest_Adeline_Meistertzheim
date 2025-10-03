@@ -1,24 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter, Href } from 'expo-router'
-import {
-    View,
-    Text,
-    TextInput,
-    Alert,
-    TouchableOpacity,
-} from 'react-native'
+import { View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { api } from '../../src/api/client'
 import { login as loginService } from '@/services/userService'
 import { globalStyles } from '@/src/styles/globalStyles'
-import Logo from '../../assets/images/logoAlgoQuest.svg';
+import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { useAuth } from '@/src/context/AuthContext'
+import { synchronize } from '@/src/db/sync'
 
 export default function LoginScreen() {
-    const router = useRouter();
+    const router = useRouter()
     const { login } = useAuth()
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const { user } = useAuth()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     const handleLogin = async () => {
         try {
@@ -38,13 +34,15 @@ export default function LoginScreen() {
         }
     }
 
+    useEffect(() => {
+        if (user?.id) {
+            synchronize(user.id)
+        }
+    }, [user?.id])
+
     return (
         <View style={globalStyles.container}>
-            <Logo
-                width={180}
-                height={80}
-                style={globalStyles.logo}
-            />
+            <Logo width={180} height={80} style={globalStyles.logo} />
             <Text style={globalStyles.title}>Connexion</Text>
             <TextInput
                 style={globalStyles.input}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     View,
     Text,
@@ -14,13 +14,16 @@ import { useRouter, Href } from 'expo-router'
 import { api } from '../../src/api/client'
 import { login } from '@/services/userService'
 import { globalStyles } from '../../src/styles/globalStyles'
-import Logo from '../../assets/images/logoAlgoQuest.svg';
+import Logo from '../../assets/images/logoAlgoQuest.svg'
+import { useAuth } from '@/src/context/AuthContext'
+import { synchronize } from '@/src/db/sync'
 
 export default function RegisterScreen() {
     const router = useRouter()
     const [pseudo, setPseudo] = useState('')
     const [email, setEmail] = useState('')
     const [password, setpassword] = useState('')
+    const { user } = useAuth()
 
     const handleRegister = async () => {
         try {
@@ -42,15 +45,20 @@ export default function RegisterScreen() {
         }
     }
 
+    useEffect(() => {
+        if (user?.id) {
+            synchronize(user.id)
+        }
+    }, [user?.id])
+
     return (
         <View style={globalStyles.container}>
-            <Logo
-  width={180}
-  height={80}
-  style={globalStyles.logo}
-/>
+            <Logo width={180} height={80} style={globalStyles.logo} />
             <Text style={globalStyles.title}>Créer un nouveau compte</Text>
-            <Text style={globalStyles.subtitle} onPress={() => router.push('/(auth)/login')}>
+            <Text
+                style={globalStyles.subtitle}
+                onPress={() => router.push('/(auth)/login')}
+            >
                 Vous êtes déjà inscrit·e ? Connectez-vous ici.
             </Text>
             <TextInput
