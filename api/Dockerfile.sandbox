@@ -1,0 +1,15 @@
+# Image de base légère
+FROM openjdk:17-jdk-alpine
+
+# Répertoire de travail
+WORKDIR /workspace
+
+# Ajouter un user non-root (sécurité)
+RUN adduser -D sandbox
+USER sandbox
+
+# Limiter la mémoire + pas de réseau (sera renforcé via docker run)
+# (pas directement possible dans le Dockerfile, mais on prépare un user safe)
+
+# Commande par défaut (sera écrasée par "docker run")
+CMD ["sh"]
