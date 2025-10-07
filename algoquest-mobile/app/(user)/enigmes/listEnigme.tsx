@@ -16,6 +16,7 @@ type Enigmes = {
 type Resolution = {
   id: string
   status: 'ECHEC' | 'REUSSI'
+  dateSoumission: string
   enigme: {
     id: string
     titre: string
@@ -37,9 +38,9 @@ export default function Liste_enigmes() {
                 )
                 const resolutions = resolutionsResponse.data
                 const merged: Enigmes[] = response.data.map((enigme) => {
-                    const resolution = resolutions.find(
-                        (r) => r.enigme.id === enigme.id,
-                    )
+                    const resolution = resolutions
+  .filter((r) => r.enigme.id === enigme.id)
+  .sort((a, b) => (a.dateSoumission < b.dateSoumission ? 1 : -1))[0];
                     return {
                         ...enigme,
                         status: (resolution ? resolution.status : 'A_FAIRE') as
@@ -106,28 +107,77 @@ export default function Liste_enigmes() {
                     >
                         <Text style={globalStyles.label}>{item.titre}</Text>
 
-                        <TouchableOpacity
-                            onPress={() => router.push(`/enigmes/${item.id}`)}
-                            style={{
-                                backgroundColor: getButtonColor(item.status),
-                                padding: 10,
-                                marginTop: 5,
-                                borderRadius: 5,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    color: '#fff',
-                                    textAlign: 'center',
-                                }}
+                        <View style={{ flexDirection: "row", justifyContent: "flex-start", marginTop: 10 }}>
+     {/* Bouton statut */}
+                            <TouchableOpacity
+                                onPress={() =>
+                                    router.push(`/enigmes/${item.id}`)
+                                }
                             >
-                                {item.status === 'REUSSI'
-                                    ? 'Réussi'
-                                    : item.status === 'ECHEC'
-                                      ? 'Echec'
-                                      : 'A faire'}
-                            </Text>
-                        </TouchableOpacity>
+                                <LinearGradient
+                                    colors={[
+                                        getButtonColor(item.status),
+                                        '#000',
+                                    ]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        flex: 1,
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginRight: 5,
+                                        marginLeft: 5,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: '#fff',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        {item.status === 'REUSSI'
+                                            ? 'Réussi'
+                                            : item.status === 'ECHEC'
+                                              ? 'Échec'
+                                              : 'À faire'}
+                                    </Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+
+                            {/* Bouton historique */}
+                            <TouchableOpacity
+                                onPress={() =>
+                                    router.push(
+                                        `/enigmes/historique/${item.id}`,
+                                    )
+                                }
+                            >
+                                <LinearGradient
+                                    colors={[
+                                        '#8e44ad',
+                                        '#000',
+                                    ]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        flex: 1,
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginRight: 5,
+                                        marginLeft: 5,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: '#fff',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Historique
+                                    </Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
             />

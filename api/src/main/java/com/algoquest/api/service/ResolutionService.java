@@ -21,12 +21,15 @@ public class ResolutionService {
     private final ResolutionRepository resolutionRepository;
     private final EnigmeRepository enigmeRepository;
     private final UserRepository userRepository;
+    private final CodeRunnerService codeRunnerService;
 
     public ResolutionService(ResolutionRepository resolutionRepository, EnigmeRepository enigmeRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            CodeRunnerService codeRunnerService) {
         this.resolutionRepository = resolutionRepository;
         this.enigmeRepository = enigmeRepository;
         this.userRepository = userRepository;
+        this.codeRunnerService = codeRunnerService;
     }
 
     public Resolution createResolution(ReponseDTO dto) {
@@ -34,7 +37,12 @@ public class ResolutionService {
                 .orElseThrow(() -> new RuntimeException("Enigme introuvable"));
         final User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
-        final boolean estCorrect = true;
+        final String sortieObtenue = codeRunnerService.runJavaWithDocker(dto.getCodeSoumis(), enigme.getEntree());
+        final boolean estCorrect = sortieObtenue.strip().replaceAll("\\s+", " ")
+            .equals(enigme.getSotieAttendue().strip().replaceAll("\\s+", " "));
+
+        System.out.println("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
+        System.out.println("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());
