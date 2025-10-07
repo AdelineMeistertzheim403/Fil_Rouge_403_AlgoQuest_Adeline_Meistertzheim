@@ -107,41 +107,77 @@ export default function Liste_enigmes() {
                     >
                         <Text style={globalStyles.label}>{item.titre}</Text>
 
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
-    {/* Bouton statut */}
-    <TouchableOpacity
-      onPress={() => router.push(`/enigmes/${item.id}`)}
-      style={{
-        flex: 1,
-        backgroundColor: getButtonColor(item.status),
-        padding: 10,
-        borderRadius: 5,
-        marginRight: 5,
-      }}
-    >
-      <Text style={{ color: "#fff", textAlign: "center" }}>
-        {item.status === "REUSSI"
-          ? "Réussi"
-          : item.status === "ECHEC"
-          ? "Échec"
-          : "À faire"}
-      </Text>
-    </TouchableOpacity>
+                        <View style={{ flexDirection: "row", justifyContent: "flex-start", marginTop: 10 }}>
+     {/* Bouton statut */}
+                            <TouchableOpacity
+                                onPress={() =>
+                                    router.push(`/enigmes/${item.id}`)
+                                }
+                            >
+                                <LinearGradient
+                                    colors={[
+                                        getButtonColor(item.status),
+                                        '#000',
+                                    ]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        flex: 1,
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginRight: 5,
+                                        marginLeft: 5,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: '#fff',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        {item.status === 'REUSSI'
+                                            ? 'Réussi'
+                                            : item.status === 'ECHEC'
+                                              ? 'Échec'
+                                              : 'À faire'}
+                                    </Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
 
-    {/* Bouton historique */}
-    <TouchableOpacity
-      onPress={() => router.push(`/enigmes/historique/${item.id}`)}
-      style={{
-        flex: 1,
-        backgroundColor: "#8e44ad", // violet pour différencier
-        padding: 10,
-        borderRadius: 5,
-        marginLeft: 5,
-      }}
-    >
-      <Text style={{ color: "#fff", textAlign: "center" }}>Historique</Text>
-    </TouchableOpacity>
-  </View>
+                            {/* Bouton historique */}
+                            <TouchableOpacity
+                                onPress={() =>
+                                    router.push(
+                                        `/enigmes/historique/${item.id}`,
+                                    )
+                                }
+                            >
+                                <LinearGradient
+                                    colors={[
+                                        '#8e44ad',
+                                        '#000',
+                                    ]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        flex: 1,
+                                        padding: 10,
+                                        borderRadius: 5,
+                                        marginRight: 5,
+                                        marginLeft: 5,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            color: '#fff',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Historique
+                                    </Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )}
             />
