@@ -14,13 +14,13 @@ type Enigmes = {
 }
 
 type Resolution = {
-  id: string
-  status: 'ECHEC' | 'REUSSI'
-  dateSoumission: string
-  enigme: {
     id: string
-    titre: string
-  }
+    status: 'ECHEC' | 'REUSSI'
+    dateSoumission: string
+    enigme: {
+        id: string
+        titre: string
+    }
 }
 
 export default function Liste_enigmes() {
@@ -39,8 +39,10 @@ export default function Liste_enigmes() {
                 const resolutions = resolutionsResponse.data
                 const merged: Enigmes[] = response.data.map((enigme) => {
                     const resolution = resolutions
-  .filter((r) => r.enigme.id === enigme.id)
-  .sort((a, b) => (a.dateSoumission < b.dateSoumission ? 1 : -1))[0];
+                        .filter((r) => r.enigme.id === enigme.id)
+                        .sort((a, b) =>
+                            a.dateSoumission < b.dateSoumission ? 1 : -1,
+                        )[0]
                     return {
                         ...enigme,
                         status: (resolution ? resolution.status : 'A_FAIRE') as
@@ -107,8 +109,14 @@ export default function Liste_enigmes() {
                     >
                         <Text style={globalStyles.label}>{item.titre}</Text>
 
-                        <View style={{ flexDirection: "row", justifyContent: "flex-start", marginTop: 10 }}>
-     {/* Bouton statut */}
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                marginTop: 10,
+                            }}
+                        >
+                            {/* Bouton statut */}
                             <TouchableOpacity
                                 onPress={() =>
                                     router.push(`/enigmes/${item.id}`)
@@ -153,10 +161,7 @@ export default function Liste_enigmes() {
                                 }
                             >
                                 <LinearGradient
-                                    colors={[
-                                        '#8e44ad',
-                                        '#000',
-                                    ]}
+                                    colors={['#8e44ad', '#000']}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={{
@@ -181,8 +186,8 @@ export default function Liste_enigmes() {
                     </View>
                 )}
             />
-            <View style={{ marginVertical: 20}}>
-                <Text style={{ textAlign: 'center', marginBottom:5}}>
+            <View style={{ marginVertical: 20 }}>
+                <Text style={{ textAlign: 'center', marginBottom: 5 }}>
                     Progression : {reussies}/{total}
                 </Text>
                 <View
@@ -192,15 +197,15 @@ export default function Liste_enigmes() {
                         borderRadius: 10,
                         overflow: 'hidden',
                     }}
-                    >
-                        <View
-                            style={{
-                                width: `${progression}%`,
-                                height: '100%',
-                                backgroundColor: '#2ECC71',
-                            }}
-                            />
-                    </View>
+                >
+                    <View
+                        style={{
+                            width: `${progression}%`,
+                            height: '100%',
+                            backgroundColor: '#2ECC71',
+                        }}
+                    />
+                </View>
             </View>
         </View>
     )

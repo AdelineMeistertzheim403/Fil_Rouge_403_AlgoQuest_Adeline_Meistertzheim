@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
-import { View, Text, TouchableOpacity, Button } from 'react-native'
+import { View, Text, TouchableOpacity, Image } from 'react-native'
 import { api } from '@/src/api/client'
 import { globalStyles } from '@/src/styles/globalStyles'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -20,7 +20,7 @@ type ResolutionResponse = {
     id: string
     codeSoumis: string
     estCorrecte: boolean
-    status: 'A_FAIRE' | 'ECHEC' | 'REUSSI'
+    status: 'A_FAIRE' | 'ECHEC' | 'REUSSI' | 'EASTER_EGG'
     enigmeId: string
     userId: string
     dateSoumission: string
@@ -28,6 +28,7 @@ type ResolutionResponse = {
 
 export default function DetailEnigme() {
     const [isSubmitting, setIsSubmitting] = useState(false)
+     const [isEasterEgg, setIsEasterEgg] = useState(false)
     const { id } = useLocalSearchParams()
     const [enigme, setEnigme] = useState<Enigme | null>(null)
     const { user } = useAuth()
@@ -55,6 +56,11 @@ export default function DetailEnigme() {
             )
             console.log('Résultat:', response.data)
             const estCorrect = response.data.estCorrecte
+
+           if (response.data.status === 'EASTER_EGG') {
+        setIsEasterEgg(true)
+        return
+      }
 
             if (estCorrect) {
                 Toast.show({
@@ -102,6 +108,37 @@ export default function DetailEnigme() {
         if (loading) {
             return <Text>Chargement...</Text>
         }
+
+         if (isEasterEgg) {
+    return (
+      <View
+        style={[
+          globalStyles.container,
+          { justifyContent: 'center', alignItems: 'center' },
+        ]}
+      >
+        <Text style={[globalStyles.title, { marginBottom: 20 }]}>
+          🐣 Easter Egg trouvé !
+        </Text>
+        <Image
+          source={require('@/assets/images/Flo-God.png')}
+          style={{ width: 250, height: 250, borderRadius: 20, marginBottom: 20 }}
+        />
+        <LinearGradient
+          colors={['#5DADE2', '#00008B']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={globalStyles.gradientButton}
+        >
+          <TouchableOpacity
+            onPress={() => router.push('/(user)/enigmes/listEnigme')}
+          >
+            <Text style={globalStyles.buttonText}>Retour à la liste</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+    )
+  }
 
         // HTML de l’éditeur CodeMirror
         const editorHtml = `

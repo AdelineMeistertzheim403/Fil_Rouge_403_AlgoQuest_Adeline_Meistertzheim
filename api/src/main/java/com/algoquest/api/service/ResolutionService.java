@@ -38,23 +38,32 @@ public class ResolutionService {
         final User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
         final String sortieObtenue = codeRunnerService.runJavaWithDocker(dto.getCodeSoumis(), enigme.getEntree());
-        final boolean estCorrect = sortieObtenue.strip().replaceAll("\\s+", " ")
-            .equals(enigme.getSotieAttendue().strip().replaceAll("\\s+", " "));
+        final String sortieNormalisee = sortieObtenue.replaceAll("\\s+", " ");
+        final String sortieAttendueNormalisee = enigme.getSotieAttendue().strip().replaceAll("\\s+", " ");
 
         System.out.println("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
         System.out.println("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());
-        resolution.setEstCorrecte(estCorrect);
         resolution.setUser(user);
         resolution.setEnigme(enigme);
         resolution.setDateSoumission(LocalDateTime.now());
 
-        if (estCorrect) {
+        // Vérifie l'easter egg
+        if (sortieNormalisee.equalsIgnoreCase("Florent")) {
+            resolution.setStatus(StatusResolution.EASTER_EGG);
+            resolution.setEstCorrecte(false);
+        }
+        // Vérifie si la sortie correspond à la sortie attendue
+        else if (sortieNormalisee.equals(sortieAttendueNormalisee)) {
             resolution.setStatus(StatusResolution.REUSSI);
-        } else {
+            resolution.setEstCorrecte(true);
+        }
+        // Sinon, c'est un échec
+        else {
             resolution.setStatus(StatusResolution.ECHEC);
+            resolution.setEstCorrecte(false);
         }
 
         return resolutionRepository.save(resolution);
