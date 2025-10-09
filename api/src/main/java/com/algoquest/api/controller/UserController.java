@@ -38,7 +38,9 @@ public class UserController {
         final User created = userService.create(user);
         // génère un token simplifié basé sur l'id (à remplacer plus tard par JWT)
         final String token = userService.generateToken(created);
-        return ResponseEntity.ok(new AuthResponse(token, created));
+        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                user.getRole());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -50,7 +52,9 @@ public class UserController {
         if (userOpt.isPresent()) {
             final User user = userOpt.get();
             final String token = userService.generateToken(user);
-            return ResponseEntity.ok(new AuthResponse(token, user));
+            final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                    user.getRole());
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(401).build();
     }
@@ -103,6 +107,8 @@ public class UserController {
         final User created = userService.create(user);
         final String token = userService.generateToken(created);
 
-        return ResponseEntity.ok(new AuthResponse(token, created));
+        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                user.getRole());
+        return ResponseEntity.ok(response);
     }
 }
