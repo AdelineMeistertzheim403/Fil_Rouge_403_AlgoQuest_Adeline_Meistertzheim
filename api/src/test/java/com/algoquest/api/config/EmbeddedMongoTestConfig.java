@@ -15,8 +15,8 @@ import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 
-@Profile("test")
 @TestConfiguration
+@Profile("test")
 public class EmbeddedMongoTestConfig {
 
     private static final String HOST = "localhost";
