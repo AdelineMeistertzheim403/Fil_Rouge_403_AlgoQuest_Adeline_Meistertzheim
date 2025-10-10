@@ -33,9 +33,7 @@ jobs:
 
       - name: Run tests with Maven and JaCoCo
         working-directory: ./api
-        env:
-          SPRING_PROFILES_ACTIVE: test-ci
-        run: mvn -B clean verify
+        run: mvn -B clean verify -Dspring.profiles.active=test-ci
 
       - name: Upload JaCoCo HTML report
         if: success()
