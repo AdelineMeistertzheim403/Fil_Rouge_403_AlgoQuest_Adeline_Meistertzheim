@@ -1,32 +1,26 @@
 package com.algoquest.api.service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.algoquest.api.dto.UserDTO;
-import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.repository.UserRepository;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    // stockage en mémoire des tokens simples (à remplacer par JWT plus tard)
-    private final Map<String, String> tokens = new HashMap<>();
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public User create(User user) {
@@ -67,20 +61,19 @@ public class UserService {
     }
 
     public String generateToken(User user) {
-        final String token = UUID.randomUUID().toString();
-        tokens.put(token, user.getId());
-        return token;
+        return jwtService.generateToken(user.getId(), user.getRole());
     }
 
+    // Vérification du JWT
     public Optional<User> findByToken(String token) {
-        final String userId = tokens.get(token);
-        if (userId != null) {
+        if (jwtService.isTokenValid(token)) {
+            final String userId = jwtService.extractUserId(token);
             return userRepository.findById(userId);
         }
         return Optional.empty();
     }
 
-    public User updateRole(String id, Role newRole) {
+    public User updateRole(String id, String newRole) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);
@@ -88,6 +81,6 @@ public class UserService {
     }
 
     public boolean existsAdmin() {
-        return userRepository.existsByRole(Role.ADMIN);
+        return userRepository.existsByRole("ADMIN");
     }
 }

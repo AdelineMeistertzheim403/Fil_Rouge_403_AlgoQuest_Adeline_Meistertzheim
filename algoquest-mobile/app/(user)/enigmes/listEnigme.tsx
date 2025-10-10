@@ -13,15 +13,14 @@ type Enigmes = {
     status?: 'A_FAIRE' | 'ECHEC' | 'REUSSI'
 }
 
-type Resolution = {
-    id: string
-    status: 'ECHEC' | 'REUSSI'
-    dateSoumission: string
-    enigme: {
-        id: string
-        titre: string
-    }
-}
+export type Resolution = {
+  id: string;
+  enigmeId: string;
+  userId: string;
+  estCorrecte: boolean;
+  dateSoumission: string;
+  status: string;
+};
 
 export default function Liste_enigmes() {
     const [enigmes, setEnigmes] = useState<Enigmes[]>([])
@@ -30,16 +29,18 @@ export default function Liste_enigmes() {
     const currentUserId = user?.id
 
     useEffect(() => {
+        console.log(currentUserId);
         const fetchEnigmes = async () => {
             try {
                 const response = await api.get<Enigmes[]>('/enigmes')
+                console.log(response.data);
                 const resolutionsResponse = await api.get<Resolution[]>(
                     `/resolutions/user/${currentUserId}`,
                 )
                 const resolutions = resolutionsResponse.data
                 const merged: Enigmes[] = response.data.map((enigme) => {
                     const resolution = resolutions
-                        .filter((r) => r.enigme.id === enigme.id)
+                        .filter((r) => r.enigmeId === enigme.id)
                         .sort((a, b) =>
                             a.dateSoumission < b.dateSoumission ? 1 : -1,
                         )[0]

@@ -1,7 +1,6 @@
 package com.algoquest.api.controller;
 
 import com.algoquest.api.dto.UserDTO;
-import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.service.UserService;
 import com.algoquest.api.dto.LoginRequest;
@@ -36,9 +35,10 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody User user) {
         final User created = userService.create(user);
-        // génère un token simplifié basé sur l'id (à remplacer plus tard par JWT)
         final String token = userService.generateToken(created);
-        return ResponseEntity.ok(new AuthResponse(token, created));
+        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                user.getRole());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
@@ -50,7 +50,9 @@ public class UserController {
         if (userOpt.isPresent()) {
             final User user = userOpt.get();
             final String token = userService.generateToken(user);
-            return ResponseEntity.ok(new AuthResponse(token, user));
+            final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                    user.getRole());
+            return ResponseEntity.ok(response);
         }
         return ResponseEntity.status(401).build();
     }
@@ -80,13 +82,12 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/users/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<User> updateUserRole(
             @PathVariable String id,
             @RequestBody Map<String, String> updates) {
 
-        final String newRoleStr = updates.get("role");
-        final Role newRole = Role.valueOf(newRoleStr.toUpperCase());
+        final String newRole = updates.get("role");
         final User updatedUser = userService.updateRole(id, newRole);
         return ResponseEntity.ok(updatedUser);
     }
@@ -98,11 +99,13 @@ public class UserController {
         }
 
         // on force le rôle ADMIN
-        user.setRole(Role.ADMIN);
+        user.setRole("ADMIN");
 
         final User created = userService.create(user);
         final String token = userService.generateToken(created);
 
-        return ResponseEntity.ok(new AuthResponse(token, created));
+        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
+                user.getRole());
+        return ResponseEntity.ok(response);
     }
 }

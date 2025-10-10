@@ -1,12 +1,16 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/testdb
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
+      database: algoquest_test
+
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  secret: "algoquest-super-secret-key-for-tests-2025-adeline-403!!"
+  expiration: 3600000
 
 logging:
   level:
-    root: ERROR
+    root: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: INFO

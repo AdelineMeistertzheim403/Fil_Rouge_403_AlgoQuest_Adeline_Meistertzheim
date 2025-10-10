@@ -5,16 +5,15 @@ import { api } from "@/src/api/client"
 import { globalStyles } from "@/src/styles/globalStyles"
 import { useAuth } from "@/src/context/AuthContext"
 
-type Resolution = {
-  id: string
-  codeSoumis: string
-  status: "ECHEC" | "REUSSI"
-  dateSoumission: string
-  enigme: {
-    id: string
-    titre: string
-  }
-}
+export type Resolution = {
+  id: string;
+  enigmeId: string;
+  userId: string;
+  estCorrecte: boolean;
+  dateSoumission: string;
+  status: string;
+  codeSoumis: string;
+};
 
 export default function HistoriqueEnigme() {
   const { id } = useLocalSearchParams() // id de l'énigme
@@ -31,7 +30,7 @@ export default function HistoriqueEnigme() {
         )
         // filtrer uniquement celles de cette énigme
         const filtered = response.data
-          .filter((r) => r.enigme.id === id)
+          .filter((r) => r.enigmeId === id)
           .sort(
             (a, b) =>
               new Date(b.dateSoumission).getTime() -
