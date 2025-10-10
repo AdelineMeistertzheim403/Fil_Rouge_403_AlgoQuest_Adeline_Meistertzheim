@@ -2,7 +2,6 @@ package com.algoquest.api.integration;
 
 import com.algoquest.api.config.EmbeddedMongoTestConfig;
 import com.algoquest.api.config.TestSecurityConfig;
-import com.algoquest.api.model.Resolution;
 import com.algoquest.api.model.User;
 import com.algoquest.api.model.Enigme;
 import com.algoquest.api.repository.ResolutionRepository;
@@ -33,6 +32,7 @@ class ResolutionControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @SuppressWarnings("unused")
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -75,6 +75,7 @@ class ResolutionControllerIntegrationTest {
                 }
                 """.formatted(user.getId(), enigme.getId());
 
+        @SuppressWarnings("unused")
         MvcResult result = mockMvc.perform(post("/api/v1/resolutions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
