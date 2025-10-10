@@ -1,11 +1,10 @@
 export interface User {
-    id: string;
-    pseudo: string;
-    email: string;
-    role: string;
+  id: string;
+  pseudo: string;
+  email: string;
+  role: string;
 }
 
-export interface LoginResponse {
-    token: string;
-    user: User;
+export interface LoginResponse extends User {
+  token: string;
 }

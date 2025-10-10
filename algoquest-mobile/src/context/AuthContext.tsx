@@ -2,20 +2,19 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '@/src/api/client';
 
-type User = {
+interface User {
   id: string;
   pseudo: string;
   email: string;
   role: string;
-};
+}
 
-type AuthContextType = {
+interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (user: User, token: string) => Promise<void>;
-  logout: () => Promise<void>;
-  loading: boolean;
-};
+  login: (user: User, token: string) => void;
+  logout: () => void;
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -47,18 +46,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   // 🔑 Connexion : sauvegarde dans le state + AsyncStorage
-  const login = async (u: User, t: string) => {
-    try {
-      setUser(u);
-      setToken(t);
-      api.defaults.headers.common['Authorization'] = `Bearer ${t}`;
-      await AsyncStorage.setItem('user', JSON.stringify(u));
-      await AsyncStorage.setItem('token', t);
-    } catch (e) {
-      console.error('Erreur lors de la sauvegarde du token:', e);
-    }
-  };
-
+  const login = (user: User, token: string) => {
+  setUser(user);
+  setToken(token);
+};
   // 🚪 Déconnexion : suppression des données
   const logout = async () => {
     try {
@@ -73,7 +64,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

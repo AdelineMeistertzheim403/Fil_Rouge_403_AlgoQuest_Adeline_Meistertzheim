@@ -3,11 +3,13 @@ import { User, LoginResponse } from "../types/api";
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>("/users/login", { email, password });
+    console.log('LOGIN RESPONSE:', response.data);
     return response.data;
 }
 
 export async function register(pseudo: string, email: string, password: string): Promise<User> {
     const response = await api.post<User>("/users/register", { pseudo, email, password: password });
+    console.log(response);
     return response.data;
 }
 
