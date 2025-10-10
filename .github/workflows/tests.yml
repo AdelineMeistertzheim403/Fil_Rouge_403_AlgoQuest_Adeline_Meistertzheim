@@ -34,8 +34,7 @@ jobs:
       - name: Run tests with Maven and JaCoCo
         working-directory: ./api
         env:
-          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
-          SPRING_PROFILES_ACTIVE: test
+          SPRING_PROFILES_ACTIVE: test-ci
         run: mvn -B clean verify
 
       - name: Upload JaCoCo HTML report
