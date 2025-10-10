@@ -9,6 +9,8 @@ import com.algoquest.api.model.User;
 import com.algoquest.api.repository.EnigmeRepository;
 import com.algoquest.api.repository.ResolutionRepository;
 import com.algoquest.api.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,14 +42,15 @@ public class ResolutionService {
         final String sortieObtenue = codeRunnerService.runJavaWithDocker(dto.getCodeSoumis(), enigme.getEntree());
         final String sortieNormalisee = sortieObtenue.replaceAll("\\s+", " ");
         final String sortieAttendueNormalisee = enigme.getSotieAttendue().strip().replaceAll("\\s+", " ");
+        final Logger logger = LoggerFactory.getLogger(ResolutionService.class);
 
-        System.out.println("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
-        System.out.println("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
+        logger.info("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
+        logger.info("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());
-        resolution.setUser(user);
-        resolution.setEnigme(enigme);
+        resolution.setUserId(user.getId());
+        resolution.setEnigmeId(enigme.getId());
         resolution.setDateSoumission(LocalDateTime.now());
 
         // Vérifie l'easter egg
@@ -78,8 +81,8 @@ public class ResolutionService {
         dto.setId(resolution.getId());
         dto.setCodeSoumis(resolution.getCodeSoumis());
         dto.setEstCorrecte(resolution.isEstCorrecte());
-        dto.setUserId(resolution.getUser().getId());
-        dto.setEnigmeId(resolution.getEnigme().getId());
+        dto.setUserId(resolution.getId());
+        dto.setEnigmeId(resolution.getId());
         dto.setDateSoumission(resolution.getDateSoumission());
         dto.setStatus(resolution.getStatus());
         return dto;

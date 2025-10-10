@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -26,11 +25,9 @@ public class Resolution {
 
     private LocalDateTime dateSoumission;
 
-    @DBRef
     @Indexed(name = "user_idx")
-    private User user;
+    private String userId;
 
-    @DBRef
     @Indexed(name = "enigme_idx")
-    private Enigme enigme;
+    private String enigmeId;
 }

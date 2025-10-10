@@ -84,7 +84,7 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PatchMapping("/users/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<User> updateUserRole(
             @PathVariable String id,
             @RequestBody Map<String, String> updates) {
