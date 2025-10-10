@@ -46,8 +46,6 @@ jobs:
       # 4️⃣ - Compile + teste ton application Spring Boot avec le profil `test-ci`
       - name: Run tests with Maven and JaCoCo
         working-directory: ./api
-        env:
-          SPRING_PROFILES_ACTIVE: test-ci
         run: mvn -B clean verify
 
       # 5️⃣ - Sauvegarde les rapports JaCoCo
