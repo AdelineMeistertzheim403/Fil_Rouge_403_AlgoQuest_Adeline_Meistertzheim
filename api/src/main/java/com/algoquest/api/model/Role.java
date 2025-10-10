@@ -1,7 +1,19 @@
 package com.algoquest.api.model;
 
-public enum Role {
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-    ADMIN,UTILISATEUR;
+@Data
+@Document(collection = "roles")
+public class Role {
+
+    @Id
+    private String id;
+    private String name;
+
+    public Role(String name) {
+        this.name = name;
+    }
 
 }
