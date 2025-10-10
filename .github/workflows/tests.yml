@@ -2,69 +2,54 @@ name: Run Tests and Generate JaCoCo Coverage
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ develop, main ]
   pull_request:
+    branches: [ develop, main ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     services:
       mongo:
-        image: mongo:6.0
+        image: mongo:latest
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
-      # 1️⃣ - Récupère ton code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ - Installe Java et Maven
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
 
-      # 3️⃣ - Vérifie que Mongo est bien prêt
-      - name: Wait for MongoDB to be ready
+      - name: Wait for Mongo to be healthy
         run: |
-          for i in {1..30}; do
-            nc -z localhost 27017 && echo "✅ MongoDB is up!" && exit 0
-            echo "⏳ Waiting for MongoDB..."
-            sleep 2
+          echo "⏳ Waiting for MongoDB..."
+          for i in {1..10}; do
+            if nc -z mongo 27017; then
+              echo "✅ MongoDB is up!"
+              break
+            fi
+            echo "Waiting..."
+            sleep 3
           done
-          echo "❌ MongoDB did not start in time" && exit 1
 
-      - name: Clean Maven cache
+      - name: Build and Run Tests
         working-directory: ./api
-        run: mvn -B clean
+        run: mvn -B clean verify -Dspring.profiles.active=test-ci
 
-      # 4️⃣ - Compile + teste ton application Spring Boot avec le profil `test-ci`
-      - name: Run tests with Maven and JaCoCo
-        working-directory: ./api
-        run: mvn -B clean verify
-
-      # 5️⃣ - Sauvegarde les rapports JaCoCo
-      - name: Upload JaCoCo coverage report
+      - name: Upload JaCoCo Coverage
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: api/target/site/jacoco/
-
-      # 6️⃣ - (Optionnel) Envoie les résultats vers Codecov si tu veux un badge
-      # - name: Upload coverage to Codecov
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     files: api/target/site/jacoco/jacoco.xml
-      #     flags: unittests
-      #     name: codecov-algoquest
+          path: api/target/site/jacoco
