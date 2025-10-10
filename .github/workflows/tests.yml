@@ -6,33 +6,41 @@ on:
   pull_request:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          java-version: 17
+          distribution: temurin
+          cache: maven
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Run tests with JaCoCo
+      - name: Run tests with Maven and JaCoCo
         working-directory: ./api
+        env:
+          SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/testdb
+          SPRING_PROFILES_ACTIVE: test
         run: mvn -B clean verify
 
       - name: Upload JaCoCo HTML report
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
-          path: api/target/site/jacoco/index.html
+          path: api/target/site/jacoco
