@@ -44,6 +44,7 @@ jobs:
           echo "❌ MongoDB did not start in time" && exit 1
 
       - name: Clean Maven cache
+        working-directory: ./api
         run: mvn -B clean
 
       # 4️⃣ - Compile + teste ton application Spring Boot avec le profil `test-ci`
