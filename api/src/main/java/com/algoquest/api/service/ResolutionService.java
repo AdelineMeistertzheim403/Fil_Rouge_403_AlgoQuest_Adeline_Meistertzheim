@@ -41,11 +41,11 @@ public class ResolutionService {
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
         final String sortieObtenue = codeRunnerService.runJavaWithDocker(dto.getCodeSoumis(), enigme.getEntree());
         final String sortieNormalisee = sortieObtenue.replaceAll("\\s+", " ");
-        final String sortieAttendueNormalisee = enigme.getSotieAttendue().strip().replaceAll("\\s+", " ");
+        final String sortieAttendueNormalisee = enigme.getSortieAttendue().strip().replaceAll("\\s+", " ");
         final Logger logger = LoggerFactory.getLogger(ResolutionService.class);
 
         logger.info("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
-        logger.info("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
+        logger.info("DEBUG - Sortie attendue: [" + enigme.getSortieAttendue() + "]");
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());

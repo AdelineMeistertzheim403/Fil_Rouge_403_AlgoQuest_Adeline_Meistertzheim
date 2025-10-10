@@ -41,7 +41,7 @@ public class Enigme {
         return this.entree;
     }
 
-    public String getSotieAttendue() {
+    public String getSortieAttendue() {
         return this.sortieAttendue;
     }
 
