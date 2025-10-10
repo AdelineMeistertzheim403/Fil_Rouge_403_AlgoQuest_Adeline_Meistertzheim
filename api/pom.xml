@@ -139,6 +139,46 @@
                     <failsOnError>true</failsOnError>
                 </configuration>
             </plugin>
+           <plugin>
+  <groupId>org.jacoco</groupId>
+  <artifactId>jacoco-maven-plugin</artifactId>
+  <version>0.8.12</version>
+  <executions>
+    <execution>
+      <id>prepare-agent</id>
+      <goals>
+        <goal>prepare-agent</goal>
+      </goals>
+    </execution>
+
+    <execution>
+      <id>report</id>
+      <phase>verify</phase>
+      <goals>
+        <goal>report</goal>
+      </goals>
+      <configuration>
+        <excludes>
+          <!-- 🧱 Classe principale -->
+          <exclude>**/AlgoquestApiApplication.class</exclude>
+
+          <!-- ⚙️ Config et sécurité -->
+          <exclude>**/config/**</exclude>
+
+          <!-- 🔐 Filtres JWT -->
+          <exclude>**/JwtAuthFilter.class</exclude>
+          <exclude>**/TokenAuthFilter.class</exclude>
+
+          <!-- 🧪 Classes de test -->
+          <exclude>**/*Test*.class</exclude>
+
+          <!-- 🧰 Eventuelles classes utilitaires -->
+          <exclude>**/dto/**</exclude>
+        </excludes>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
         </plugins>
     </build>
 </project>
