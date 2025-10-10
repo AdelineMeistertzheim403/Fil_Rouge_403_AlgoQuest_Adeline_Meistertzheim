@@ -1,5 +1,6 @@
 package com.algoquest.api.integration;
 
+import com.algoquest.api.config.TestCiConfig;
 import com.algoquest.api.config.TestSecurityConfig;
 import com.algoquest.api.model.Enigme;
 import com.algoquest.api.repository.EnigmeRepository;
@@ -23,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test-ci")
-@Import( TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, TestCiConfig.class})
 class EnigmeControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;

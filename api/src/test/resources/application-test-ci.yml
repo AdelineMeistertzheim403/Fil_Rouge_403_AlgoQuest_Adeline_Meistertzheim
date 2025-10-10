@@ -1,12 +1,16 @@
 spring:
-  data:
-    mongodb:
-      uri: mongodb://mongo:27017/algoquest_test
   main:
     allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/algoquest_test
+
+spring:
   autoconfigure:
-    exclude: # désactive Flapdoodle
+    exclude:
       - org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration
 
 logging:
   level:

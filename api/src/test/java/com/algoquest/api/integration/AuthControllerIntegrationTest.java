@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.algoquest.api.config.TestCiConfig;
 import com.algoquest.api.config.TestSecurityConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test-ci")
-@Import(TestSecurityConfig.class)
+@Import({TestSecurityConfig.class, TestCiConfig.class})
 public class AuthControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
