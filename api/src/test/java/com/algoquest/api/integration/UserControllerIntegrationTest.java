@@ -1,6 +1,5 @@
 package com.algoquest.api.integration;
 
-import com.algoquest.api.config.EmbeddedMongoTestConfig;
 import com.algoquest.api.config.TestSecurityConfig;
 import com.algoquest.api.model.User;
 import com.algoquest.api.repository.UserRepository;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test-ci")
-@Import({EmbeddedMongoTestConfig.class, TestSecurityConfig.class})
+@Import(TestSecurityConfig.class)
 class UserControllerIntegrationTest {
 
     @Autowired private MockMvc mockMvc;
