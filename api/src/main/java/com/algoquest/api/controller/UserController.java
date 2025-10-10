@@ -36,7 +36,6 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody User user) {
         final User created = userService.create(user);
-        // génère un token simplifié basé sur l'id (à remplacer plus tard par JWT)
         final String token = userService.generateToken(created);
         final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
                 user.getRole());
