@@ -1,15 +1,13 @@
 package com.algoquest.api.dto;
 
-import com.algoquest.api.model.Role;
-
 public class AuthResponse {
     private String token;
     private String id;
     private String pseudo;
     private String email;
-    private Role role;
+    private String role;
 
-    public AuthResponse(String token, String id, String pseudo, String email, Role role) {
+    public AuthResponse(String token, String id, String pseudo, String email, String role) {
         this.token = token;
         this.id = id;
         this.pseudo = pseudo;
@@ -42,10 +40,10 @@ public class AuthResponse {
     public void setEmail(String email) {
         this.email = email;
     }
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

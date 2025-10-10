@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.algoquest.api.dto.UserDTO;
-import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.repository.UserRepository;
 
@@ -62,7 +61,7 @@ public class UserService {
     }
 
     public String generateToken(User user) {
-        return jwtService.generateToken(user.getId(), user.getRole().name());
+        return jwtService.generateToken(user.getId(), user.getRole());
     }
 
     // Vérification du JWT
@@ -74,7 +73,7 @@ public class UserService {
         return Optional.empty();
     }
 
-    public User updateRole(String id, Role newRole) {
+    public User updateRole(String id, String newRole) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         user.setRole(newRole);
@@ -82,6 +81,6 @@ public class UserService {
     }
 
     public boolean existsAdmin() {
-        return userRepository.existsByRole(Role.ADMIN);
+        return userRepository.existsByRole("ADMIN");
     }
 }

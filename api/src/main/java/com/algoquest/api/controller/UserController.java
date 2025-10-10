@@ -1,7 +1,6 @@
 package com.algoquest.api.controller;
 
 import com.algoquest.api.dto.UserDTO;
-import com.algoquest.api.model.Role;
 import com.algoquest.api.model.User;
 import com.algoquest.api.service.UserService;
 import com.algoquest.api.dto.LoginRequest;
@@ -88,8 +87,7 @@ public class UserController {
             @PathVariable String id,
             @RequestBody Map<String, String> updates) {
 
-        final String newRoleStr = updates.get("role");
-        final Role newRole = Role.valueOf(newRoleStr.toUpperCase());
+        final String newRole = updates.get("role");
         final User updatedUser = userService.updateRole(id, newRole);
         return ResponseEntity.ok(updatedUser);
     }
@@ -101,7 +99,7 @@ public class UserController {
         }
 
         // on force le rôle ADMIN
-        user.setRole(Role.ADMIN);
+        user.setRole("ADMIN");
 
         final User created = userService.create(user);
         final String token = userService.generateToken(created);
