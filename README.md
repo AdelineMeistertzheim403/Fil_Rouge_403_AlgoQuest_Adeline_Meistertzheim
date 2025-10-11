@@ -1,5 +1,10 @@
 # Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim
 
+# AlgoQuest API
+
+[![Build](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/tests.yml/badge.svg)](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/tests.yml)
+
+
 ## Projet AlgoQuest
 
 Créer une application éducative permettant à des utilisateurs de s’exercer à l’alogrithmie en résolvant des énigmes. Chaque énigme propose un énoncé, des entrées, et attend une sortie. L’utilisateur doit écrire un alogrithme dans un éditeur intégré pour résoudre le défi.
