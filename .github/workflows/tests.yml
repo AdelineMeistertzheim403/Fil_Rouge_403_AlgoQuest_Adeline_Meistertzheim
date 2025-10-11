@@ -53,3 +53,13 @@ jobs:
         with:
           name: jacoco-report
           path: api/target/site/jacoco
+
+      - name: Upload JaCoCo report to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: target/site/jacoco/jacoco.xml
+            flags: unittests
+            name: Java CI JaCoCo Report
+            fail_ci_if_error: true
+
