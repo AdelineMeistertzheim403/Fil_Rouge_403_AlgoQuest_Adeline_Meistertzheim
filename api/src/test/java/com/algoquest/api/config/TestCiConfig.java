@@ -1,26 +1,36 @@
 package com.algoquest.api.config;
 
+import com.algoquest.api.repository.*;
+import com.algoquest.api.service.JwtService;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.mockito.Mockito;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 @TestConfiguration
 public class TestCiConfig {
 
     @Bean
     @Primary
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public UserRepository userRepository() {
+        return Mockito.mock(UserRepository.class);
     }
 
-    // ⚠️ Mock pour éviter connexion Mongo
     @Bean
     @Primary
-    public MongoTemplate mongoTemplate() {
-        return Mockito.mock(MongoTemplate.class);
+    public EnigmeRepository enigmeRepository() {
+        return Mockito.mock(EnigmeRepository.class);
+    }
+
+    @Bean
+    @Primary
+    public ResolutionRepository resolutionRepository() {
+        return Mockito.mock(ResolutionRepository.class);
+    }
+
+    @Bean
+    @Primary
+    public JwtService jwtService() {
+        return Mockito.mock(JwtService.class);
     }
 }
