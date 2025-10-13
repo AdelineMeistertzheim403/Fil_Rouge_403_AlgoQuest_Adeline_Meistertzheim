@@ -9,6 +9,8 @@ import com.algoquest.api.model.User;
 import com.algoquest.api.repository.EnigmeRepository;
 import com.algoquest.api.repository.ResolutionRepository;
 import com.algoquest.api.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,23 +40,33 @@ public class ResolutionService {
         final User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("Utilisateur introuvable"));
         final String sortieObtenue = codeRunnerService.runJavaWithDocker(dto.getCodeSoumis(), enigme.getEntree());
-        final boolean estCorrect = sortieObtenue.strip().replaceAll("\\s+", " ")
-            .equals(enigme.getSotieAttendue().strip().replaceAll("\\s+", " "));
+        final String sortieNormalisee = sortieObtenue.replaceAll("\\s+", " ");
+        final String sortieAttendueNormalisee = enigme.getSortieAttendue().strip().replaceAll("\\s+", " ");
+        final Logger logger = LoggerFactory.getLogger(ResolutionService.class);
 
-        System.out.println("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
-        System.out.println("DEBUG - Sortie attendue: [" + enigme.getSotieAttendue() + "]");
+        logger.info("DEBUG - Sortie obtenue: [" + sortieObtenue + "]");
+        logger.info("DEBUG - Sortie attendue: [" + enigme.getSortieAttendue() + "]");
 
         final Resolution resolution = new Resolution();
         resolution.setCodeSoumis(dto.getCodeSoumis());
-        resolution.setEstCorrecte(estCorrect);
-        resolution.setUser(user);
-        resolution.setEnigme(enigme);
+        resolution.setUserId(user.getId());
+        resolution.setEnigmeId(enigme.getId());
         resolution.setDateSoumission(LocalDateTime.now());
 
-        if (estCorrect) {
+        // Vérifie l'easter egg
+        if (sortieNormalisee.equalsIgnoreCase("Florent")) {
+            resolution.setStatus(StatusResolution.EASTER_EGG);
+            resolution.setEstCorrecte(false);
+        }
+        // Vérifie si la sortie correspond à la sortie attendue
+        else if (sortieNormalisee.equals(sortieAttendueNormalisee)) {
             resolution.setStatus(StatusResolution.REUSSI);
-        } else {
+            resolution.setEstCorrecte(true);
+        }
+        // Sinon, c'est un échec
+        else {
             resolution.setStatus(StatusResolution.ECHEC);
+            resolution.setEstCorrecte(false);
         }
 
         return resolutionRepository.save(resolution);
@@ -69,8 +81,8 @@ public class ResolutionService {
         dto.setId(resolution.getId());
         dto.setCodeSoumis(resolution.getCodeSoumis());
         dto.setEstCorrecte(resolution.isEstCorrecte());
-        dto.setUserId(resolution.getUser().getId());
-        dto.setEnigmeId(resolution.getEnigme().getId());
+        dto.setUserId(resolution.getId());
+        dto.setEnigmeId(resolution.getId());
         dto.setDateSoumission(resolution.getDateSoumission());
         dto.setStatus(resolution.getStatus());
         return dto;

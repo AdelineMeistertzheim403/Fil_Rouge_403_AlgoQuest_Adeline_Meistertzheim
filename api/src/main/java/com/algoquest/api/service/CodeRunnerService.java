@@ -41,8 +41,6 @@ public class CodeRunnerService {
                     IMAGE,
                     tempDir.toAbsolutePath(),
                     input == null ? "" : input.replace("'", "'\\''"));
-            System.out.println("DEBUG - tempDir: " + tempDir.toAbsolutePath());
-            System.out.println("DEBUG - Commande Docker: " + dockerCmd);
             // 4. Lancer le process
             final Process process = Runtime.getRuntime().exec(new String[] { "sh", "-c", dockerCmd });
             final boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);

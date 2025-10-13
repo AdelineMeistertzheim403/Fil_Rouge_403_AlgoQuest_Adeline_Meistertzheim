@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      database: algoquest_test
+
+  main:
+    allow-bean-definition-overriding: true
+
+jwt:
+  secret: "algoquest-super-secret-key-for-tests-2025-adeline-403!!"
+  expiration: 3600000
+
+logging:
+  level:
+    root: WARN
+    org.springframework.data.mongodb.core.MongoTemplate: INFO
