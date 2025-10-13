@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useRouter, Href } from 'expo-router'
 import { View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { api } from '../../src/api/client'
 import { login as loginService } from '@/services/userService'
 import { globalStyles } from '@/src/styles/globalStyles'
 import Logo from '../../assets/images/logoAlgoQuest.svg'
@@ -17,32 +16,23 @@ interface User {
 }
 
 export default function LoginScreen() {
-  const router = useRouter()
-  const { login } = useAuth();
-    const { user } = useAuth()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const router = useRouter();
+  const { login, user } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      // 💡 Dis à TS que data est de type User & { token: string }
       const data: User & { token: string } = await loginService(email, password);
+      const { token, ...userData } = data;
 
-      // 👉 Sépare le token du reste des données
-      const { token, ...user } = data;
-
-      // 🔒 Sauvegarde dans le stockage local
-      await AsyncStorage.setItem('user', JSON.stringify(user));
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
       await AsyncStorage.setItem('token', token);
 
-      // 🔐 Met à jour le contexte
-      login(user, token);
+      login(userData, token);
+      Alert.alert('Connexion réussie', `Bienvenue ${userData.pseudo}`);
 
-      // ✅ Message de succès
-      Alert.alert('Connexion réussie', `Bienvenue ${user.pseudo}`);
-
-      // 🚀 Redirection selon le rôle
-      if (user.role === 'ADMIN') {
+      if (userData.role === 'ADMIN') {
         router.replace('/(admin)/dashboard' as Href);
       } else {
         router.replace('/(user)/enigmes/listEnigme' as Href);
@@ -51,12 +41,6 @@ export default function LoginScreen() {
       console.error('Erreur de connexion :', err.response?.data || err.message);
       Alert.alert('Erreur', 'Identifiants incorrects ou problème de connexion');
     }
-
-    useEffect(() => {
-        if (user?.id) {
-            synchronize(user.id)
-        }
-    }, [user?.id])
   };
 
   return (
@@ -80,10 +64,8 @@ export default function LoginScreen() {
         secureTextEntry
       />
 
-      <TouchableOpacity style={globalStyles.button}>
-        <Text style={globalStyles.buttonText} onPress={handleLogin}>
-          Se connecter
-        </Text>
+      <TouchableOpacity style={globalStyles.button} onPress={handleLogin}>
+        <Text style={globalStyles.buttonText}>Se connecter</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={globalStyles.button}>

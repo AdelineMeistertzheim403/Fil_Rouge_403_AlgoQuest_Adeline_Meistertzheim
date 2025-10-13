@@ -9,7 +9,12 @@ export type Enigme = {
 export type Resolution = {
   id: string
   codeSoumis: string
-  status: "A_FAIRE" | "REUSSI" | "ECHEC"
+  status: string
   dateSoumission: string
-  enigme: Enigme
+  enigme?: {
+    id: string
+    titre?: string
+  } | null
+  enigmeId?: string
+  userId?: string
 }

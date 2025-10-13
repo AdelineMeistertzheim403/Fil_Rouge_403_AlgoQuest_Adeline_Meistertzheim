@@ -1,9 +1,10 @@
-import { useLocalSearchParams } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useEffect, useState } from "react"
-import { View, Text, FlatList } from "react-native"
+import { View, Text, FlatList, TouchableOpacity } from "react-native"
 import { api } from "@/src/api/client"
 import { globalStyles } from "@/src/styles/globalStyles"
 import { useAuth } from "@/src/context/AuthContext"
+import { LinearGradient } from "expo-linear-gradient"
 
 export type Resolution = {
   id: string;
@@ -59,6 +60,16 @@ export default function HistoriqueEnigme() {
   return (
     <View style={globalStyles.container}>
       <Text style={globalStyles.title}>Historique des tentatives</Text>
+      <TouchableOpacity onPress={() => router.push('/(user)/enigmes/listEnigme')} style={{ flex: 1, marginHorizontal: 5 }}>
+              <LinearGradient
+                  colors={['#5DADE2', '#00008B']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={globalStyles.gradientButton}
+              >
+                  <Text style={globalStyles.buttonText}>Retour</Text>
+              </LinearGradient>
+          </TouchableOpacity>
       <FlatList
         data={resolutions}
         keyExtractor={(item) => item.id}

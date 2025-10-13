@@ -4,7 +4,7 @@ import type { Enigme, Resolution } from "@/types/type"
 
 export type EnigmeWithStatus = Enigme & { status: "A_FAIRE" | "ECHEC" | "REUSSI" }
 
-export const useEnigmes = () => {
+export const useEnigmes = (refreshTrigger = 0) => {
   const [enigmes, setEnigmes] = useState<EnigmeWithStatus[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -15,18 +15,24 @@ export const useEnigmes = () => {
         const enriched: EnigmeWithStatus[] = []
 
         for (const e of localEnigmes) {
-          const resolutions = (await getResolutionsByEnigme(e.id)) as Resolution[]
+  const resolutions = (await getResolutionsByEnigme(e.id)) as Resolution[]
 
-          // On prend la plus récente
-          const lastRes = resolutions.sort(
-            (a, b) => new Date(b.dateSoumission).getTime() - new Date(a.dateSoumission).getTime()
-          )[0]
+  const lastRes = resolutions.sort(
+    (a, b) => new Date(b.dateSoumission).getTime() - new Date(a.dateSoumission).getTime()
+  )[0]
 
-          enriched.push({
-            ...e,
-            status: lastRes ? (lastRes.status as "ECHEC" | "REUSSI") : "A_FAIRE",
-          })
-        }
+  // ✅ Si une réussite existe, elle prévaut
+  const hasSuccess = resolutions.some(r => r.status === "REUSSI")
+
+  enriched.push({
+    ...e,
+    status: hasSuccess
+      ? "REUSSI"
+      : lastRes
+      ? (lastRes.status as "ECHEC" | "REUSSI")
+      : "A_FAIRE",
+  })
+}
 
         setEnigmes(enriched)
       } catch (err) {
@@ -37,7 +43,7 @@ export const useEnigmes = () => {
     }
 
     load()
-  }, [])
+  }, [refreshTrigger])
 
   return { enigmes, loading }
 }

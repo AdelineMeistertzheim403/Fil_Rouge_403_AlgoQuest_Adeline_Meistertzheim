@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react'
 import { globalStyles } from '@/src/styles/globalStyles'
 import { router } from 'expo-router'
-import { View, Text, TouchableOpacity, FlatList } from 'react-native'
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    FlatList,
+    ActivityIndicator,
+    Alert,
+} from 'react-native'
 import Logo from '../../../assets/images/logoAlgoQuest.svg'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from '@/src/context/AuthContext'
-import { useEnigmes } from "@/hooks/useEnigmes"
+import { useEnigmes } from '@/hooks/useEnigmes'
+import { synchronize } from '@/src/db/sync'
 
 export default function Liste_enigmes() {
     const { user } = useAuth()
     const currentUserId = user?.id
-    const { enigmes, loading } = useEnigmes()
-
-    if (loading) {
-        return (
-            <View style={globalStyles.container}>
-                <Text>Chargement...</Text>
-            </View>
-        )
-    }
+    const [syncing, setSyncing] = useState(false)
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
+    const { enigmes, loading } = useEnigmes(refreshTrigger)
 
     const getButtonColor = (status?: string) => {
         switch (status) {
@@ -31,6 +33,31 @@ export default function Liste_enigmes() {
         }
     }
 
+    const handleSynchronize = async () => {
+  if (!currentUserId) return;
+  setSyncing(true);
+  requestAnimationFrame(async () => {
+    try {
+      await synchronize(currentUserId);
+      setRefreshTrigger(p => p + 1);
+      Alert.alert('✅ Synchro terminée');
+    } catch (e) {
+      Alert.alert('❌ Erreur synchro');
+      console.error(e);
+    } finally {
+      setSyncing(false);
+    }
+  });
+};
+
+    if (loading) {
+        return (
+            <View style={globalStyles.container}>
+                <Text>Chargement...</Text>
+            </View>
+        )
+    }
+
     const total = enigmes.length
     const reussies = enigmes.filter((e) => e.status === 'REUSSI').length
     const progression = total > 0 ? (reussies / total) * 100 : 0
@@ -41,12 +68,34 @@ export default function Liste_enigmes() {
             <Text style={globalStyles.title}>
                 Bienvenue {user?.pseudo ?? ''}
             </Text>
-            <Text style={globalStyles.title}>Liste des enigmes</Text>
+            <Text style={globalStyles.title}>Liste des énigmes</Text>
 
-            {/* Liste des enigmes */}
+            {/* Bouton Synchroniser */}
+            <TouchableOpacity
+                style={{
+                    backgroundColor: '#5DADE2',
+                    borderRadius: 8,
+                    padding: 10,
+                    marginVertical: 10,
+                    alignItems: 'center',
+                }}
+                onPress={handleSynchronize}
+                disabled={syncing}
+            >
+                {syncing ? (
+                    <ActivityIndicator color="#fff" />
+                ) : (
+                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+                        🔄 Synchroniser
+                    </Text>
+                )}
+            </TouchableOpacity>
+
+            {/* Liste des énigmes */}
             <FlatList
                 data={enigmes}
                 keyExtractor={(item) => item.id}
+                extraData={enigmes} // pour re-render après synchro
                 renderItem={({ item }) => (
                     <View
                         style={{
@@ -68,7 +117,10 @@ export default function Liste_enigmes() {
                             {/* Bouton statut */}
                             <TouchableOpacity
                                 onPress={() =>
-                                    router.push(`/enigmes/${item.id}`)
+                                    router.push({
+                                        pathname: '/enigmes/[id]',
+                                        params: { id: item.id },
+                                    })
                                 }
                             >
                                 <LinearGradient
@@ -82,8 +134,7 @@ export default function Liste_enigmes() {
                                         flex: 1,
                                         padding: 10,
                                         borderRadius: 5,
-                                        marginRight: 5,
-                                        marginLeft: 5,
+                                        marginHorizontal: 5,
                                     }}
                                 >
                                     <Text
@@ -104,24 +155,21 @@ export default function Liste_enigmes() {
                             {/* Bouton historique */}
                             <TouchableOpacity
                                 onPress={() =>
-                                    router.push(
-                                        `/enigmes/historique/${item.id}`,
-                                    )
+                                    router.push({
+                                        pathname: '/enigmes/historique/[id]',
+                                        params: { id: item.id },
+                                    })
                                 }
                             >
                                 <LinearGradient
-                                    colors={[
-                                        '#8e44ad',
-                                        '#000',
-                                    ]}
+                                    colors={['#8e44ad', '#000']}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 1 }}
                                     style={{
                                         flex: 1,
                                         padding: 10,
                                         borderRadius: 5,
-                                        marginRight: 5,
-                                        marginLeft: 5,
+                                        marginHorizontal: 5,
                                     }}
                                 >
                                     <Text
@@ -138,6 +186,8 @@ export default function Liste_enigmes() {
                     </View>
                 )}
             />
+
+            {/* Barre de progression */}
             <View style={{ marginVertical: 20 }}>
                 <Text style={{ textAlign: 'center', marginBottom: 5 }}>
                     Progression : {reussies}/{total}
