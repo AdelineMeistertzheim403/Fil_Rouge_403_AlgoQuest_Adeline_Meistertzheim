@@ -20,6 +20,7 @@ export default function RegisterScreen() {
   const [pseudo, setPseudo] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+    const { user } = useAuth()
 
   const handleRegister = async () => {
     try {

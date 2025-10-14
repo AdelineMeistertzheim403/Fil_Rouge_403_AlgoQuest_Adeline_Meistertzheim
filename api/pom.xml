@@ -91,9 +91,24 @@
             <version>3.5.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+    <groupId>org.testcontainers</groupId>
+    <artifactId>mongodb</artifactId>
+    <scope>test</scope>
+</dependency>
     </dependencies>
     <build>
         <plugins>
+        <plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.2.5</version>
+  <configuration>
+    <systemPropertyVariables>
+      <spring.profiles.active>test-ci</spring.profiles.active>
+    </systemPropertyVariables>
+  </configuration>
+</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -110,6 +125,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                     <fork>true</fork>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -139,18 +155,16 @@
                     <failsOnError>true</failsOnError>
                 </configuration>
             </plugin>
-           <plugin>
+        <plugin>
   <groupId>org.jacoco</groupId>
   <artifactId>jacoco-maven-plugin</artifactId>
   <version>0.8.12</version>
   <executions>
     <execution>
-      <id>prepare-agent</id>
       <goals>
         <goal>prepare-agent</goal>
       </goals>
     </execution>
-
     <execution>
       <id>report</id>
       <phase>verify</phase>
@@ -159,26 +173,18 @@
       </goals>
       <configuration>
         <excludes>
-          <!-- 🧱 Classe principale -->
           <exclude>**/AlgoquestApiApplication.class</exclude>
-
-          <!-- ⚙️ Config et sécurité -->
           <exclude>**/config/**</exclude>
-
-          <!-- 🔐 Filtres JWT -->
           <exclude>**/JwtAuthFilter.class</exclude>
           <exclude>**/TokenAuthFilter.class</exclude>
-
-          <!-- 🧪 Classes de test -->
           <exclude>**/*Test*.class</exclude>
-
-          <!-- 🧰 Eventuelles classes utilitaires -->
           <exclude>**/dto/**</exclude>
         </excludes>
       </configuration>
     </execution>
   </executions>
 </plugin>
+
         </plugins>
     </build>
 </project>

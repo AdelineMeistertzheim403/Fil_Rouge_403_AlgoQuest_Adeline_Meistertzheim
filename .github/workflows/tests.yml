@@ -1,0 +1,65 @@
+name: Run Tests and Generate JaCoCo Coverage
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Wait for Mongo to be healthy
+        run: |
+          echo "⏳ Waiting for MongoDB..."
+          for i in {1..10}; do
+            if nc -z mongo 27017; then
+              echo "✅ MongoDB is up!"
+              break
+            fi
+            echo "Waiting..."
+            sleep 3
+          done
+
+      - name: Build and Run Tests
+        working-directory: ./api
+        run: mvn -B clean verify -Dspring.profiles.active=test-ci
+
+      - name: Upload JaCoCo Coverage
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: api/target/site/jacoco
+
+      - name: Upload JaCoCo report to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+            token: ${{ secrets.CODECOV_TOKEN }}
+            files: target/site/jacoco/jacoco.xml
+            flags: unittests
+            name: Java CI JaCoCo Report
+            fail_ci_if_error: true
+
