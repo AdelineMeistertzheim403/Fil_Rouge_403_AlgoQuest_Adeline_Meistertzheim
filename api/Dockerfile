@@ -4,25 +4,32 @@ WORKDIR /app
 
 # Copie du pom.xml d'abord pour le cache des dépendances
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn -B -q -Dmaven.test.skip=true -DskipITs dependency:go-offline
 
 # Copie du reste du code
 COPY src ./src
 
-RUN mvn clean package -DskipTests -Dcheckstyle.skip=true
+COPY config ./config
+
+RUN mvn -B -e clean verify checkstyle:check
 
 # Étape 2 — Runtime
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:17-jre-jammy AS runtime
 WORKDIR /app
 
-# Outils utiles pour le healthcheck ou debug
-RUN apt-get update && apt-get install -y curl docker-cli && rm -rf /var/lib/apt/lists/*
+# Installer tini depuis les dépôts Ubuntu officiels
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends tini && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copie du JAR depuis l'étape précédente
+# Créer un utilisateur non-root
+RUN groupadd --system api && useradd --system --create-home --gid api api
+
 COPY --from=builder /app/target/*.jar app.jar
+COPY --chmod=755 entrypoint.sh /app/entrypoint.sh
 
-# Port exposé par l’application
+USER api
 EXPOSE 8080
 
-# Commande de lancement
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/usr/bin/tini", "--", "/app/entrypoint.sh"]
+

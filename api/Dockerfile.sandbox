@@ -4,12 +4,14 @@ FROM openjdk:17-jdk-alpine
 # Répertoire de travail
 WORKDIR /workspace
 
+RUN apk add --no-cache bash curl coreutils
+
 # Ajouter un user non-root (sécurité)
-RUN adduser -D sandbox
+RUN addgroup -S sandbox && adduser -S sandbox -G sandbox
 USER sandbox
 
 # Limiter la mémoire + pas de réseau (sera renforcé via docker run)
 # (pas directement possible dans le Dockerfile, mais on prépare un user safe)
 
 # Commande par défaut (sera écrasée par "docker run")
-CMD ["sh"]
+CMD ["bash", "-lc", "echo 'Sandbox ready in /workdir' && tail -f /dev/null"]
