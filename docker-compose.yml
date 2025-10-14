@@ -7,8 +7,16 @@ services:
         container_name: api-algoquest
         env_file:
             - .env
+        environment:
+            - SPRING_PROFILES_ACTIVE=prod
+            - JWT_SECRET=${JWT_SECRET}
+        secrets:
+            - mongo_app_user
+            - mongo_app_password
         ports:
-            - "${API_PORT}:8080"
+            - "8080:8080"
+        mem_limit: 512m
+        cpus: "1.0"
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - algoquest_tmp:/tmp/algoquest
@@ -28,19 +36,34 @@ services:
         build:
             context: .
             dockerfile: ./api/Dockerfile.sandbox
+        container_name: sandbox-java
         image: algoquest-sandbox
         volumes:
             - algoquest_tmp:/tmp/algoquest
+        mem_limit: 512m
+        cpus: "1.0"
 
     mongo:
         image: mongo:6
         container_name: mongo-algoquest
-        restart: always
         env_file:
             - .env
         volumes:
-            - ./mongo-init:/docker-entrypoint-initdb.d
+            - ./mongo-init:/docker-entrypoint-initdb.d:ro
             - mongo_data:/data/db
+        secrets:
+            - mongo_root_user
+            - mongo_root_password
+            - mongo_app_user
+            - mongo_app_password
+        environment:
+            # Nom de la DB applicative (utilisé par le script d'init)
+            MONGO_APP_DB: algoquest
+            # Hack propre: on exporte les variables root depuis les secrets avant de démarrer le script officiel
+            # -> évite d'écrire les identifiants en clair dans docker-compose
+        entrypoint: [ "bash", "-lc", "export MONGO_INITDB_ROOT_USERNAME=$(cat /run/secrets/mongo_root_user) && export MONGO_INITDB_ROOT_PASSWORD=$(cat /run/secrets/mongo_root_password) && exec /usr/local/bin/docker-entrypoint.sh mongod" ]
+        mem_limit: 1g
+        cpus: "1.0"
         healthcheck:
             test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
             interval: 30s
@@ -84,3 +107,13 @@ volumes:
 
 networks:
     algoquest-net:
+
+secrets:
+  mongo_root_user:
+    file: ./secrets/mongo_root_user.txt
+  mongo_root_password:
+    file: ./secrets/mongo_root_password.txt
+  mongo_app_user:
+    file: ./secrets/mongo_app_user.txt
+  mongo_app_password:
+    file: ./secrets/mongo_app_password.txt
