@@ -66,10 +66,19 @@ public class UserService {
 
     // Vérification du JWT
     public Optional<User> findByToken(String token) {
-        if (jwtService.isTokenValid(token)) {
+        try {
+            // 1️⃣ Extraire l'ID utilisateur depuis le token
             final String userId = jwtService.extractUserId(token);
-            return userRepository.findById(userId);
+
+            // 2️⃣ Vérifier la validité (expiration + correspondance de l'ID)
+            if (jwtService.isTokenValid(token, userId)) {
+                return userRepository.findById(userId);
+            }
+        } catch (Exception e) {
+            // En cas de token invalide, mal formé, ou signature incorrecte
+            return Optional.empty();
         }
+
         return Optional.empty();
     }
 
