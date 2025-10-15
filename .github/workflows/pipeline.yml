@@ -1,0 +1,119 @@
+name: CI/CD - AlgoQuest
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3df4a37a28807b9a42f8a0a66db7953b602b8c4b
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@5dfcbe1b63a75d6d61f8a69e64b502c2f5f8a3b6
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Build and Run Tests
+        working-directory: ./api
+        run: mvn -B clean verify -Dspring.profiles.active=test-ci
+
+      - name: Upload JaCoCo Coverage
+        uses: actions/upload-artifact@1cb9a3d6bdfa32a2df7c2d20c68eec7d60c1c3f2
+        with:
+          name: jacoco-report
+          path: api/target/site/jacoco
+
+      - name: Upload JaCoCo report to Codecov
+        uses: codecov/codecov-action@e31e1b1b030aafaa6755e5b47e7a2f65e1b20827
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: api/target/site/jacoco/jacoco.xml
+          flags: unittests
+          name: Java CI JaCoCo Report
+          fail_ci_if_error: true
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3df4a37a28807b9a42f8a0a66db7953b602b8c4b
+
+      - name: Setup Node.js
+        uses: actions/setup-node@b0e89b8a19af7bc84b3bde6f92a9d6ed58f3942b
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: ./front
+        run: npm install
+
+      - name: Lint
+        working-directory: ./front
+        run: npm run lint --if-present
+
+      - name: Run tests
+        working-directory: ./front
+        run: npm test --if-present
+
+      - name: Build Android APK (Debug)
+        working-directory: ./front/android
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@1cb9a3d6bdfa32a2df7c2d20c68eec7d60c1c3f2
+        with:
+          name: algoquest-apk
+          path: front/android/app/build/outputs/apk/debug/app-debug.apk
+
+  deploy:
+    name: 🚀 Deploy Backend to VPS
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@3df4a37a28807b9a42f8a0a66db7953b602b8c4b
+
+      - name: Log in to private registry
+        uses: docker/login-action@b9d709c085a8b779b33c855812c922264fddb631
+        with:
+          registry: registry.adelinemeistertzheim.fr
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@5e804d9275e5b2f7b2ac2a94e9eeadbd7d75a947
+        with:
+          context: ./api
+          push: true
+          tags: registry.adelinemeistertzheim.fr/algoquest/backend:latest
+
+      - name: Deploy on VPS via SSH
+        uses: appleboy/ssh-action@eb8bde39a6b5cc8d3f1b8c98e49d9c6fce4f9b14
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "🔁 Déploiement AlgoQuest API"
+            docker login registry.adelinemeistertzheim.fr -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PASSWORD }}
+            docker pull registry.adelinemeistertzheim.fr/algoquest/backend:latest
+            cd /home/${{ secrets.VPS_USER }}/algoquest
+            docker compose up -d --force-recreate api
+            docker image prune -f

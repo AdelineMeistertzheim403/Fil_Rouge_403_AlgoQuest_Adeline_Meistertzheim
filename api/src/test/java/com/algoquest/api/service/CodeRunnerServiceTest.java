@@ -21,7 +21,7 @@ class CodeRunnerServiceTest {
         codeRunnerService = new CodeRunnerService();
     }
 
-    // ✅ Test 1 : Cas nominal — exécution correcte sans erreurs
+    //  Test 1 : Cas nominal — exécution correcte sans erreurs
     @Test
     void shouldReturnOutputWhenJavaRunsSuccessfully() throws Exception {
         Process mockProcess = mock(Process.class);
@@ -44,7 +44,7 @@ class CodeRunnerServiceTest {
         }
     }
 
-    // ✅ Test 2 : Timeout (process ne se termine pas dans le temps imparti)
+    //  Test 2 : Timeout (process ne se termine pas dans le temps imparti)
     @Test
     void shouldReturnTimeoutErrorWhenProcessExceedsLimit() throws Exception {
         Process mockProcess = mock(Process.class);
@@ -62,7 +62,7 @@ class CodeRunnerServiceTest {
         }
     }
 
-    // ✅ Test 3 : Erreur de compilation (exit code ≠ 0)
+    //  Test 3 : Erreur de compilation (exit code ≠ 0)
     @Test
     void shouldReturnCompilationErrorWhenExitCodeNonZero() throws Exception {
         Process mockProcess = mock(Process.class);
@@ -83,7 +83,7 @@ class CodeRunnerServiceTest {
         }
     }
 
-    // ✅ Test 4 : Exception système (IOException, etc.)
+    //  Test 4 : Exception système (IOException, etc.)
     @Test
     void shouldReturnErrorMessageWhenExceptionThrown() throws Exception {
         try (MockedStatic<Runtime> runtimeMock = Mockito.mockStatic(Runtime.class)) {
@@ -98,7 +98,7 @@ class CodeRunnerServiceTest {
         }
     }
 
-    // ✅ Test 5 : Sortie vide
+    // Test 5 : Sortie vide
     @Test
     void shouldReturnPlaceholderWhenNoOutput() throws Exception {
         Process mockProcess = mock(Process.class);
