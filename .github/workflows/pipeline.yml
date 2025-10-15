@@ -100,6 +100,7 @@ jobs:
             username: ${{ secrets.VPS_USER }}
             key: ${{ secrets.VPS_SSH_KEY }}
             script: |
+                docker login registry.adelinemeistertzheim.fr -u admin -p '${{ secrets.REGISTRY_PASSWORD }}'
                 cd /home/debian/algoquest
                 docker compose pull api
                 docker compose down
