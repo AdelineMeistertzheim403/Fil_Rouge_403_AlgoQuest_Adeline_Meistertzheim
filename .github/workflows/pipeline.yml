@@ -8,6 +8,7 @@ on:
 
 jobs:
   backend:
+    name: Build and Push Backend API
     runs-on: ubuntu-latest
     services:
             mongo:
@@ -47,6 +48,24 @@ jobs:
                 flags: unittests
                 name: Java CI JaCoCo Report
                 fail_ci_if_error: true
+
+            # 🔒 Connexion à ta registry privée
+            - name: Login to private Docker registry
+              uses: docker/login-action@v3
+              with:
+                registry: registry.adelinemeistertzheim.fr
+                username: admin
+                password: ${{ secrets.REGISTRY_PASSWORD }}
+
+            # 🏗️ Build et Push de l’image vers ta registry privée
+            - name: Build and Push Docker image
+              uses: docker/build-push-action@v5
+              with:
+                context: ./api
+                push: true
+                tags: registry.adelinemeistertzheim.fr/algoquest/backend:latest
+                cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/backend:buildcache
+                cache-to: type=inline
 
   frontend:
     runs-on: ubuntu-latest
