@@ -10,35 +10,43 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     services:
-        mongo:
-            image: mongo:latest
-            ports:
-                - 27017:27017
-            options: >-
-                --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
-                --health-interval=10s
-                --health-timeout=5s
-                --health-retries=5
-
+            mongo:
+                image: mongo:latest
+                ports:
+                    - 27017:27017
+                options: >-
+                    --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+                    --health-interval=10s
+                    --health-timeout=5s
+                    --health-retries=5
     steps:
-        - name: Checkout repository
-          uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+            - name: Checkout repository
+              uses: actions/checkout@v4 # SHA: 692973e3d937129bcbf40652eb9f2f61becf3332
 
-        - name: Set up JDK 17
-          uses: actions/setup-java@69f1b73496f0dce04aef978b0f36a0868b9a0e3e
-          with:
-            java-version: '17'
-            distribution: 'temurin'
+            - name: Set up JDK 17
+              uses: actions/setup-java@v4 # SHA: 69f1b73496f0dce04aef978b0f36a0868b9a0e3e
+              with:
+                java-version: '17'
+                distribution: 'temurin'
 
-        - name: Build and Run Tests
-          working-directory: ./api
-          run: mvn -B clean verify -Dspring.profiles.active=test-ci
+            - name: Build and Run Tests
+              working-directory: ./api
+              run: mvn -B clean verify -Dspring.profiles.active=test-ci
 
-        - name: Upload JaCoCo Coverage
-          uses: actions/upload-artifact@1d4ba1fbb3b45e9e75b1013f9a0d8788f13b7c18
-          with:
-            name: jacoco-report
-            path: api/target/site/jacoco
+            - name: Upload JaCoCo Coverage
+              uses: actions/upload-artifact@v4 # SHA: 1d4ba1fbb3b45e9e75b1013f9a0d8788f13b7c18
+              with:
+                name: jacoco-report
+                path: api/target/site/jacoco
+
+            - name: Upload JaCoCo report to Codecov
+              uses: codecov/codecov-action@v4 # SHA: 0cfda1a68f6b99b9df6a68b48fdaea59da1f95bb
+              with:
+                token: ${{ secrets.CODECOV_TOKEN }}
+                files: api/target/site/jacoco/jacoco.xml
+                flags: unittests
+                name: Java CI JaCoCo Report
+                fail_ci_if_error: true
 
   frontend:
     runs-on: ubuntu-latest
