@@ -75,7 +75,7 @@ jobs:
           working-directory: ./algoquest-mobile
           run: |
             npx expo install
-            npx expo export
+            npx expo export --platform-android
 
         - name: Upload APK artifact
           uses: actions/upload-artifact@v4 # SHA: 1d4ba1fbb3b45e9e75b1013f9a0d8788f13b7c18
