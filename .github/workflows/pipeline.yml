@@ -84,38 +84,24 @@ jobs:
             path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
 
   deploy:
-    name: 🚀 Deploy Backend to VPS
+    name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [backend, frontend]
-    if: github.ref == 'refs/heads/main'
+    if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') && success() }}
 
     steps:
-      - uses: actions/checkout@3df4a37a28807b9a42f8a0a66db7953b602b8c4b
+        - name: Checkout repository
+          uses: actions/checkout@v4 # SHA: 692973e3d937129bcbf40652eb9f2f61becf3332
 
-      - name: Log in to private registry
-        uses: docker/login-action@b9d709c085a8b779b33c855812c922264fddb631
-        with:
-          registry: registry.adelinemeistertzheim.fr
-          username: ${{ secrets.REGISTRY_USER }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
+        - name: Deploy via SSH to VPS
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+            host: ${{ secrets.VPS_HOST }}
+            username: ${{ secrets.VPS_USER }}
+            key: ${{ secrets.VPS_SSH_KEY }}
+            script: |
+                cd /opt/algoquest
+                docker compose pull api
+                docker compose down
+                docker compose up -d
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@5e804d9275e5b2f7b2ac2a94e9eeadbd7d75a947
-        with:
-          context: ./api
-          push: true
-          tags: registry.adelinemeistertzheim.fr/algoquest/backend:latest
-
-      - name: Deploy on VPS via SSH
-        uses: appleboy/ssh-action@eb8bde39a6b5cc8d3f1b8c98e49d9c6fce4f9b14
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            echo "🔁 Déploiement AlgoQuest API"
-            docker login registry.adelinemeistertzheim.fr -u ${{ secrets.REGISTRY_USER }} -p ${{ secrets.REGISTRY_PASSWORD }}
-            docker pull registry.adelinemeistertzheim.fr/algoquest/backend:latest
-            cd /home/${{ secrets.VPS_USER }}/algoquest
-            docker compose up -d --force-recreate api
-            docker image prune -f
