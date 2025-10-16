@@ -52,7 +52,7 @@ export default function HistoriqueEnigme() {
   if (loading) {
     return (
       <View style={globalStyles.container}>
-        <Text>Chargement de l'historique...</Text>
+        <Text>Chargement de l&apos;historique...</Text>
       </View>
     )
   }

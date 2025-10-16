@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter, Href } from 'expo-router'
 import { View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -6,7 +6,6 @@ import { login as loginService } from '@/services/userService'
 import { globalStyles } from '@/src/styles/globalStyles'
 import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { useAuth } from '@/src/context/AuthContext'
-import { synchronize } from '@/src/db/sync'
 
 interface User {
   id: string;
@@ -17,7 +16,7 @@ interface User {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -73,7 +72,7 @@ export default function LoginScreen() {
           style={globalStyles.buttonText}
           onPress={() => router.push('./register' as Href)}
         >
-          Pas de compte ? S'inscrire
+          Pas de compte ? S&apos;inscrire
         </Text>
       </TouchableOpacity>
     </View>

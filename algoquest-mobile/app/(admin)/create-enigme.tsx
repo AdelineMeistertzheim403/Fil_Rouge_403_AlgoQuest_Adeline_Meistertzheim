@@ -5,7 +5,7 @@ import {
     TextInput,
     TouchableOpacity,
 } from 'react-native'
-import { useRouter, Href } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { api } from '../../src/api/client'
 import { globalStyles } from '../../src/styles/globalStyles'
 import Toast from 'react-native-toast-message'
@@ -23,6 +23,7 @@ export default function RegisterScreen() {
     const handleEnregistrerEnigme = async () => {
         try {
             const token = await AsyncStorage.getItem('authToken');
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const response = await api.post('/enigmes', {
             titre,
             enonce,

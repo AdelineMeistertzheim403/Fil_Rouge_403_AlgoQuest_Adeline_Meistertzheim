@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router'
 import { useEffect, useState } from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { api } from '@/src/api/client'
 import { globalStyles } from '@/src/styles/globalStyles'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -39,7 +39,7 @@ export default function DetailEnigme() {
 
     return (
         <View style={globalStyles.container}>
-            <Text style={globalStyles.title}>Detail de l'énigme</Text>
+            <Text style={globalStyles.title}>Detail de l&apos;énigme</Text>
 
             {enigme ? (
                 <View

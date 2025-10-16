@@ -20,7 +20,6 @@ export default function Gestion_users() {
     const [loading, setLoading] = useState(true)
     const { user } = useAuth()
     const currentUserId = user?.id
-    const [userRoles, setUserRoles] = useState<{ [id: string]: string }>({})
 
     // Récupération des utilisateurs depuis l’API
     useEffect(() => {

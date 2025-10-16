@@ -15,8 +15,7 @@ type Enigmes = {
 export default function Liste_enigmes() {
     const [enigmes, setEnigmes] = useState<Enigmes[]>([])
     const [loading, setLoading] = useState(true)
-    const { user } = useAuth()
-    const currentUserId = user?.id
+    useAuth()
 
     useEffect(() => {
         const fetchEnigmes = async () => {
@@ -77,7 +76,7 @@ export default function Liste_enigmes() {
                                         textAlign: 'center',
                                     }}
                                 >
-                                    Voir détail de l'énigme
+                                    Voir détail de l&apos;énigme
                                 </Text>
                             </TouchableOpacity>
                     </View>
