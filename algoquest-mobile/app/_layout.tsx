@@ -9,7 +9,6 @@ import { StatusBar } from 'expo-status-bar'
 import 'react-native-reanimated'
 import Toast from 'react-native-toast-message'
 import { AuthProvider } from '../src/context/AuthContext'
-import { Slot } from 'expo-router'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useEffect } from 'react'

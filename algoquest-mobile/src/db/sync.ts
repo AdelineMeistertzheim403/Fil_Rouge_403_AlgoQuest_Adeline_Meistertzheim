@@ -21,7 +21,7 @@ export const syncFromServer = async (userId: string) => {
         const detailResponse = await api.get<Enigme>(`/enigmes/${e.id}`)
         completeEnigmes.push(detailResponse.data)
       } catch (err) {
-        console.warn(`Impossible de récupérer les détails de l'énigme ${e.id}`)
+        console.warn(`Impossible de récupérer les détails de l'énigme ${e.id} `,err)
 
         completeEnigmes.push(e)
       }

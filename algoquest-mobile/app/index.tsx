@@ -1,4 +1,4 @@
-import { View, Text, Button, TouchableOpacity, Image } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 import { globalStyles } from '@/src/styles/globalStyles'
 import Logo from '../assets/images/logoAlgoQuest.svg';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { globalStyles } from '@/src/styles/globalStyles'
 import { router } from 'expo-router'
 import {
