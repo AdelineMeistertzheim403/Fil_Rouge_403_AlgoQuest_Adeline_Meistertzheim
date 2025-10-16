@@ -2,7 +2,7 @@
 
 # AlgoQuest API
 
-[![Build](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/pipeline.yml/badge.svg)](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/pipeline.yml)
+[![CI/CD - AlgoQuest](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/pipeline.yml/badge.svg)](https://github.com/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/actions/workflows/pipeline.yml)
 
 [![codecov](https://codecov.io/github/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim/graph/badge.svg?token=VMTV61566J)](https://codecov.io/github/AdelineMeistertzheim403/Fil_Rouge_403_AlgoQuest_Adeline_Meistertzheim)
 
