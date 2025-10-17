@@ -37,7 +37,7 @@ public class CodeRunnerService {
             // 3. Construire la commande Docker
             final String dockerCmd = String.format(
                     "docker run --rm -i --network=none --memory=128m --cpus=1 " +
-                            "--volumes-from algoquest-api -u root %s sh -c \"cd %s && javac Main.java && echo '%s' | java Main\"",
+                            "-v /tmp/algoquest:/tmp/algoquest -u root %s sh -c \"cd %s && javac Main.java && echo '%s' | java Main\"",
                     IMAGE,
                     tempDir.toAbsolutePath(),
                     input == null ? "" : input.replace("'", "'\\''"));
