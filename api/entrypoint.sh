@@ -27,4 +27,4 @@ chmod -R 777 /tmp/algoquest
 ls -ld /tmp /tmp/algoquest
 
 echo "🚀 Lancement de l'application sous l'utilisateur 'api'..."
-exec su -s /bin/sh api -c "/usr/bin/java ${JAVA_OPTS} -jar /app/app.jar"
+exec su -s /bin/sh api -c "/opt/java/openjdk/bin/java ${JAVA_OPTS} -jar /app/app.jar"
