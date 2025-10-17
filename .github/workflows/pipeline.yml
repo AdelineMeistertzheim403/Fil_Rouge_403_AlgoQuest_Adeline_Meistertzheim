@@ -7,20 +7,31 @@ on:
     branches: [ main, develop ]
 
 jobs:
+  # 🧩 Étape 1 : Déterminer les fichiers modifiés
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'api/**'
+            frontend:
+              - 'algoquest-mobile/**'
+
+  # 🧱 Backend build & push
   backend:
     name: Build and Push Backend API
     runs-on: ubuntu-latest
-    # ✅ Ce job ne s’exécute que si des fichiers du dossier api/ ont été modifiés
-    if: |
-      contains(github.event.head_commit.message, '[force-backend]') ||
-      github.event_name == 'pull_request' ||
-      github.event_name == 'push' && (
-        startsWith(github.event.head_commit.message, 'api/') ||
-        contains(join(toJson(github.event.commits.*.modified), ' '), 'api/') ||
-        contains(join(toJson(github.event.commits.*.added), ' '), 'api/') ||
-        contains(join(toJson(github.event.commits.*.removed), ' '), 'api/')
-      )
-
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     services:
       mongo:
         image: mongo:latest
@@ -77,19 +88,12 @@ jobs:
           cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/backend:buildcache
           cache-to: type=inline
 
+  # 📱 Frontend build
   frontend:
     name: Build Mobile Front
     runs-on: ubuntu-latest
-    # ✅ Ce job ne s’exécute que si des fichiers du dossier algoquest-mobile/ ont été modifiés
-    if: |
-      contains(github.event.head_commit.message, '[force-front]') ||
-      github.event_name == 'pull_request' ||
-      github.event_name == 'push' && (
-        startsWith(github.event.head_commit.message, 'algoquest-mobile/') ||
-        contains(join(toJson(github.event.commits.*.modified), ' '), 'algoquest-mobile/') ||
-        contains(join(toJson(github.event.commits.*.added), ' '), 'algoquest-mobile/') ||
-        contains(join(toJson(github.event.commits.*.removed), ' '), 'algoquest-mobile/')
-      )
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
 
     steps:
       - name: Checkout repository
@@ -123,13 +127,14 @@ jobs:
           path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
+  # 🚀 Déploiement
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [backend, frontend]
-    if: >
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') &&
-      (needs.backend.result == 'success' || needs.frontend.result == 'success')
+    if: |
+      (needs.backend.result == 'success' || needs.frontend.result == 'success') &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
     steps:
       - name: Checkout repository
