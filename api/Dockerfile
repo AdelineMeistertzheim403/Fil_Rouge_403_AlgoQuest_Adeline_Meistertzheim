@@ -24,8 +24,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Créer un utilisateur + groupe docker et lui donner accès au socket
-RUN groupadd --system api && useradd --system --create-home --gid api api && \
-    groupadd -for docker && usermod -aG docker api
+RUN groupadd -r api 2>/dev/null || true && \
+    useradd -r -g api -m api 2>/dev/null || true && \
+    groupadd -f docker 2>/dev/null || true && \
+    usermod -aG docker api || true
+
 
 # Copier le JAR généré
 COPY --from=builder /app/target/*.jar app.jar
