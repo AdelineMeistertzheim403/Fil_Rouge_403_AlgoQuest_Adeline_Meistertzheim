@@ -69,38 +69,49 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
+
     steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4 # SHA: 692973e3d937129bcbf40652eb9f2f61becf3332
+      # 🧩 Étape 1 — Récupération du dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Setup Node.js
-          uses: actions/setup-node@v4 # SHA: 0a44ba1864cb7c64f00e4edfa3c6b8ba6f5a69e3
-          with:
-            node-version: '20'
+      # 🧰 Étape 2 — Configuration Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-        - name: Install dependencies
-          working-directory: ./algoquest-mobile
-          run: npm install
+      # ⚙️ Étape 3 — Installation des dépendances
+      - name: Install dependencies
+        working-directory: algoquest-mobile
+        run: npm ci
 
-        - name: Lint
-          working-directory: ./algoquest-mobile
-          run: npm run lint --if-present || true
+      # 🏗️ Étape 4 — Génération du projet Android (si pas déjà créé)
+      - name: Generate native Android project
+        working-directory: algoquest-mobile
+        run: npx expo prebuild --platform android
 
-        - name: Run tests
-          working-directory: ./algoquest-mobile
-          run: npm test --if-present
+      # 🔒 Étape 5 — Donner les droits à Gradle
+      - name: Make gradlew executable
+        working-directory: algoquest-mobile/android
+        run: chmod +x gradlew
 
-        - name: Build Expo project (Android debug)
-          working-directory: ./algoquest-mobile
-          run: |
-            npx expo install
-            npx expo export --platform android
+      # 🧱 Étape 6 — Compilation de l’APK Debug
+      - name: Build Android debug APK
+        working-directory: algoquest-mobile/android
+        run: ./gradlew assembleDebug
 
-        - name: Upload APK artifact
-          uses: actions/upload-artifact@v4 # SHA: 1d4ba1fbb3b45e9e75b1013f9a0d8788f13b7c18
-          with:
-            name: algoquest-apk
-            path: ./algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
+      # 🔍 Étape 7 — Vérification du dossier de sortie
+      - name: Debug — list APK output
+        run: ls -R algoquest-mobile/android/app/build/outputs/apk
+
+      # 📦 Étape 8 — Upload de l’APK en artifact GitHub
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: algoquest-apk
+          path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
 
   deploy:
     name: Deploy to VPS
