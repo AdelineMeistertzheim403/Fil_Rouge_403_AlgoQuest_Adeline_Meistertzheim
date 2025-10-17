@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service
 public class CodeRunnerService {
 
-    private static final String IMAGE = "algoquest-sandbox";
+    private static final String IMAGE = "registry.adelinemeistertzheim.fr/algoquest/sandbox:latest";
     private static final int TIMEOUT_SECONDS = 15;
 
     public String runJavaWithDocker(String codeSource, String input) {
