@@ -67,10 +67,10 @@ public class UserService {
     // Vérification du JWT
     public Optional<User> findByToken(String token) {
         try {
-            // 1️⃣ Extraire l'ID utilisateur depuis le token
+            //  Extraire l'ID utilisateur depuis le token
             final String userId = jwtService.extractUserId(token);
 
-            // 2️⃣ Vérifier la validité (expiration + correspondance de l'ID)
+            // Vérifier la validité (expiration + correspondance de l'ID)
             if (jwtService.isTokenValid(token, userId)) {
                 return userRepository.findById(userId);
             }

@@ -98,7 +98,6 @@ public class UserController {
             return ResponseEntity.status(403).body("Un administrateur existe déjà !");
         }
 
-        // on force le rôle ADMIN
         user.setRole("ADMIN");
 
         final User created = userService.create(user);
