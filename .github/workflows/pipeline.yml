@@ -84,7 +84,7 @@ jobs:
       # ⚙️ Étape 3 — Installation des dépendances
       - name: Install dependencies
         working-directory: algoquest-mobile
-        run: npm ci
+        run: npm install
 
       # 🏗️ Étape 4 — Génération du projet Android (si pas déjà créé)
       - name: Generate native Android project
