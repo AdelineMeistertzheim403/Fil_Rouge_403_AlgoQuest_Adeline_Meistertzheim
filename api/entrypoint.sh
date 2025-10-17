@@ -17,7 +17,6 @@ if [ -z "$SPRING_DATA_MONGODB_URI" ] && [ -n "$MONGO_APP_USER" ] && [ -n "$MONGO
   export SPRING_DATA_MONGODB_URI="mongodb://${MONGO_APP_USER}:${MONGO_APP_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB_NAME}?authSource=admin&retryWrites=true&w=majority"
 fi
 
-# On peut aussi forcer le port de Spring si besoin:
 : "${SERVER_PORT:=8080}"
 export SERVER_PORT
 
@@ -28,4 +27,4 @@ chmod -R 777 /tmp/algoquest
 ls -ld /tmp /tmp/algoquest
 
 echo "🚀 Lancement de l'application sous l'utilisateur 'api'..."
-exec su -s /bin/sh api -c "java ${JAVA_OPTS} -jar /app/app.jar"
+exec su -s /bin/sh api -c "/usr/bin/java ${JAVA_OPTS} -jar /app/app.jar"
