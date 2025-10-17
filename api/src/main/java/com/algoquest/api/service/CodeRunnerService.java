@@ -52,12 +52,12 @@ public class CodeRunnerService {
             }
 
             // 5. Lire la sortie
-            String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
+            final String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
                     .lines().collect(Collectors.joining("\n"));
-            String errors = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+            final String errors = new BufferedReader(new InputStreamReader(process.getErrorStream()))
                     .lines().collect(Collectors.joining("\n"));
 
-            int exit = process.exitValue();
+            final int exit = process.exitValue();
 
             if (exit != 0) {
                 return "Erreur d'exécution/compilation:\n" + errors;
