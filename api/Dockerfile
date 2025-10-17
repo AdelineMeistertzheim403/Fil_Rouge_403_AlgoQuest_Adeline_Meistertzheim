@@ -15,25 +15,18 @@ RUN mvn -B -e clean verify checkstyle:check
 FROM eclipse-temurin:17-jre-jammy AS runtime
 WORKDIR /app
 
-# Installer tini + docker-cli (pour exécuter docker run)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends tini docker-cli && \
     rm -rf /var/lib/apt/lists/*
 
-# Créer un utilisateur non-root
+# Créer utilisateur non-root
 RUN groupadd -r api && useradd -r -g api -m api
 
-# ✅ Créer le répertoire temporaire AVANT de passer à l'utilisateur api
-RUN chmod 1777 /tmp && \
-    mkdir -p /tmp/algoquest && \
-    chown -R api:api /tmp/algoquest && \
-    chmod -R 777 /tmp/algoquest
+# Donner les bons droits à /tmp
+RUN chmod 1777 /tmp
 
-# Copier le JAR et le script d’entrée
 COPY --from=builder /app/target/*.jar app.jar
 COPY --chmod=755 entrypoint.sh /app/entrypoint.sh
 
-# Exécuter sous l’utilisateur api
-USER api
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/tini", "--", "/app/entrypoint.sh"]

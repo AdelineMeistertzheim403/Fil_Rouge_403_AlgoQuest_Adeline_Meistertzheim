@@ -21,4 +21,11 @@ fi
 : "${SERVER_PORT:=8080}"
 export SERVER_PORT
 
-exec java ${JAVA_OPTS} -jar /app/app.jar
+echo "🔧 Vérification du répertoire /tmp/algoquest..."
+mkdir -p /tmp/algoquest
+chown -R api:api /tmp/algoquest
+chmod -R 777 /tmp/algoquest
+ls -ld /tmp /tmp/algoquest
+
+echo "🚀 Lancement de l'application sous l'utilisateur 'api'..."
+exec su -s /bin/sh api -c "java ${JAVA_OPTS} -jar /app/app.jar"
