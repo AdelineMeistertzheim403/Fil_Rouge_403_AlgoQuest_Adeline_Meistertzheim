@@ -50,11 +50,11 @@ class AuthControllerIntegrationTest {
         mockUser.setPassword("encoded1234");
         mockUser.setRole("USER");
 
-        // ✅ Simuler comportements attendus
+        //  Simuler comportements attendus
         Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn("encoded1234");
         Mockito.when(passwordEncoder.matches(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
 
-        // ✅ Adapter à ta signature réelle : (String userId, String role)
+        //  Adapter à ta signature réelle : (String userId, String role)
         Mockito.when(jwtService.generateToken(Mockito.anyString(), Mockito.anyString()))
                 .thenReturn("fake-jwt-token");
 
@@ -65,7 +65,7 @@ class AuthControllerIntegrationTest {
 
     @Test
     void shouldRegisterAndLoginSuccessfully() throws Exception {
-        // 🧩 1️⃣ Inscription
+        //  Inscription
         User newUser = new User();
         newUser.setPseudo("Adeline");
         newUser.setEmail("adeline@test.fr");
@@ -79,7 +79,7 @@ class AuthControllerIntegrationTest {
                 .andExpect(jsonPath("$.email").value("adeline@test.fr"))
                 .andExpect(jsonPath("$.pseudo").value("Adeline"));
 
-        // 🧩 2️⃣ Connexion
+        //  Connexion
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("adeline@test.fr");
         loginRequest.setPassword("1234");

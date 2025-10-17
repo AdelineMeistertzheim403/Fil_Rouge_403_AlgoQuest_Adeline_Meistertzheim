@@ -13,8 +13,7 @@ public class TestSecurityConfig {
     @Primary
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            //Désactivation complète de la sécurité pour les tests
-            .securityMatcher("/api/v1/**") // évite le "any request" qui entre en conflit
+            .securityMatcher("/api/v1/**")
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().permitAll()

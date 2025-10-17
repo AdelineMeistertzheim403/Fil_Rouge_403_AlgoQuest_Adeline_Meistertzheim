@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  # 🧩 Étape 1 : Détecter les fichiers modifiés
+  #  Étape 1 : Détecter les fichiers modifiés
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -34,7 +34,7 @@ jobs:
               - 'docker-compose.yml'
               - 'README.md'
 
-  # 🧱 Backend build & push
+  #  Backend build & push
   backend:
     name: Build and Push Backend API
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
           cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/backend:buildcache
           cache-to: type=inline
 
-  # ⚙️ Sandbox build & push
+  #  Sandbox build & push
   sandbox:
     name: Build and Push Sandbox Image
     runs-on: ubuntu-latest
@@ -125,7 +125,7 @@ jobs:
           cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/sandbox:buildcache
           cache-to: type=inline
 
-  # 📱 Frontend build (Expo / React Native)
+  #  Frontend build (Expo / React Native)
   frontend:
     name: Build Mobile Front
     runs-on: ubuntu-latest
@@ -141,7 +141,7 @@ jobs:
         with:
           node-version: 20
 
-      # ⚡ Ajout du cache pour accélérer le build
+      #  Ajout du cache pour accélérer le build
       - name: Cache Expo, Gradle & Node
         uses: actions/cache@v4
         with:
@@ -177,13 +177,17 @@ jobs:
           path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
-  # 🚀 Déploiement automatique
+  #  Déploiement automatique
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [backend, sandbox, frontend]
     if: |
-      (needs.backend.result == 'success' || needs.frontend.result == 'success') &&
+      (
+        (needs.backend.result == 'success' || needs.backend.result == 'skipped') &&
+        (needs.frontend.result == 'success' || needs.frontend.result == 'skipped') &&
+        (needs.sandbox.result == 'success' || needs.sandbox.result == 'skipped')
+      ) &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
     steps:
