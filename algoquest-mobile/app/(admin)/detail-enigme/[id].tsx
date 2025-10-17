@@ -10,7 +10,7 @@ type Enigme = {
     titre: string
     enonce: string
     entree: string
-    sotieAttendue: string
+    sortieAttendue: string
 }
 
 export default function DetailEnigme() {
@@ -53,7 +53,7 @@ export default function DetailEnigme() {
                     <Text>Titre : {enigme.titre}</Text>
                     <Text>Enoncé : {enigme.enonce}</Text>
                     <Text>Entrée : {enigme.entree}</Text>
-                    <Text>Sortie attendue : {enigme.sotieAttendue}</Text>
+                    <Text>Sortie attendue : {enigme.sortieAttendue}</Text>
                 </View>
             ) : (
                 <Text>Aucune énigme trouvée</Text>

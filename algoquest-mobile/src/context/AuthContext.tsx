@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // 🔄 Charger user/token depuis AsyncStorage au démarrage
+  // Charger user/token depuis AsyncStorage au démarrage
   useEffect(() => {
     const loadAuth = async () => {
       try {
@@ -42,12 +42,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuth();
   }, []);
 
-  // 🔑 Connexion : sauvegarde dans le state + AsyncStorage
+  //  Connexion : sauvegarde dans le state + AsyncStorage
   const login = (user: User, token: string) => {
   setUser(user);
   setToken(token);
+
+  //  Met à jour directement le header global
+  api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 };
-  // 🚪 Déconnexion : suppression des données
+
+  //  Déconnexion : suppression des données
   const logout = async () => {
     try {
       setUser(null);

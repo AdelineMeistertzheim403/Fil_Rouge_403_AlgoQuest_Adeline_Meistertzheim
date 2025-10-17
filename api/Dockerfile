@@ -19,9 +19,9 @@ RUN mvn -B -e clean verify checkstyle:check
 FROM eclipse-temurin:17-jre-jammy AS runtime
 WORKDIR /app
 
-# Installer tini depuis les dépôts Ubuntu officiels
+# Installer tini + docker-cli
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends tini && \
+    apt-get install -y --no-install-recommends tini docker-cli && \
     rm -rf /var/lib/apt/lists/*
 
 # Créer un utilisateur non-root
