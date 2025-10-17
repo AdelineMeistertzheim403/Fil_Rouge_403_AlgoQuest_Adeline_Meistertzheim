@@ -24,9 +24,10 @@ RUN apt-get update && \
 RUN groupadd -r api && useradd -r -g api -m api
 
 # ✅ Créer le répertoire temporaire AVANT de passer à l'utilisateur api
-RUN mkdir -p /tmp/algoquest && \
+RUN chmod 1777 /tmp && \
+    mkdir -p /tmp/algoquest && \
     chown -R api:api /tmp/algoquest && \
-    chmod -R 775 /tmp/algoquest
+    chmod -R 777 /tmp/algoquest
 
 # Copier le JAR et le script d’entrée
 COPY --from=builder /app/target/*.jar app.jar
