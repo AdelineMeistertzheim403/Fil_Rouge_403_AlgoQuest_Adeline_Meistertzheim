@@ -49,7 +49,7 @@ jobs:
                 name: Java CI JaCoCo Report
                 fail_ci_if_error: true
 
-            # 🔒 Connexion à ta registry privée
+            #  Connexion à la registry privée
             - name: Login to private Docker registry
               uses: docker/login-action@v3
               with:
@@ -57,7 +57,7 @@ jobs:
                 username: admin
                 password: ${{ secrets.REGISTRY_PASSWORD }}
 
-            # 🏗️ Build et Push de l’image vers ta registry privée
+            #  Build et Push de l’image vers la registry privée
             - name: Build and Push Docker image
               uses: docker/build-push-action@v5
               with:
@@ -71,41 +71,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 🧩 Étape 1 — Récupération du dépôt
+      # Étape 1 — Récupération du dépôt
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🧰 Étape 2 — Configuration Node.js
+      # Étape 2 — Configuration Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # ⚙️ Étape 3 — Installation des dépendances
+      # Étape 3 — Installation des dépendances
       - name: Install dependencies
         working-directory: algoquest-mobile
-        run: npm install
+        run: npm ci
 
-      # 🏗️ Étape 4 — Génération du projet Android (si pas déjà créé)
+      # Étape 4 — Génération du projet Android (si pas déjà créé)
       - name: Generate native Android project
         working-directory: algoquest-mobile
         run: npx expo prebuild --platform android
 
-      # 🔒 Étape 5 — Donner les droits à Gradle
+      # Étape 5 — Donner les droits à Gradle
       - name: Make gradlew executable
         working-directory: algoquest-mobile/android
         run: chmod +x gradlew
 
-      # 🧱 Étape 6 — Compilation de l’APK Debug
+      # Étape 6 — Compilation de l’APK Debug
       - name: Build Android debug APK
         working-directory: algoquest-mobile/android
         run: ./gradlew assembleDebug
 
-      # 🔍 Étape 7 — Vérification du dossier de sortie
+      # Étape 7 — Vérification du dossier de sortie
       - name: Debug — list APK output
         run: ls -R algoquest-mobile/android/app/build/outputs/apk
 
-      # 📦 Étape 8 — Upload de l’APK en artifact GitHub
+      # Étape 8 — Upload de l’APK en artifact GitHub
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:

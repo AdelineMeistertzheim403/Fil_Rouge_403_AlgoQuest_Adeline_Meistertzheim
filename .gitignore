@@ -34,7 +34,6 @@ algoquest-mobile/ios/
 algoquest-mobile/android/
 algoquest-mobile/.idea/
 algoquest-mobile/.DS_Store
-algoquest-mobile/package-lock.json
 
 # Ignore SQLite local DB if used
 algoquest-mobile/*.db
