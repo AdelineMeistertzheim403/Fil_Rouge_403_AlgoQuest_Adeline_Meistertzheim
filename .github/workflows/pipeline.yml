@@ -90,17 +90,15 @@ jobs:
           working-directory: ./algoquest-mobile
           run: npm test --if-present
 
-        - name: Build Expo project (Android debug)
+        - name: Build Android APK
           working-directory: ./algoquest-mobile
-          run: |
-            npx expo install
-            npx expo export --platform android
+          run: npx expo run:android --variant=debug
 
         - name: Upload APK artifact
           uses: actions/upload-artifact@v4 # SHA: 1d4ba1fbb3b45e9e75b1013f9a0d8788f13b7c18
           with:
             name: algoquest-apk
-            path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
+            path: ./algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
 
   deploy:
     name: Deploy to VPS
