@@ -1,5 +1,5 @@
 import { api } from "../src/api/client";
-import { User, LoginResponse } from "../types/api";
+import { User } from "../types/api";
 import axios from 'axios'
 
 /*export async function login(email: string, password: string): Promise<LoginResponse> {
@@ -9,7 +9,6 @@ import axios from 'axios'
 }
 */
 export const login = async (email: string, password: string) => {
-  // ⚠️ Créer une requête SANS le header Authorization
   return axios.post('https://apialgoquest.adelinemeistertzheim.fr/api/v1/users/login', {
     email,
     password,

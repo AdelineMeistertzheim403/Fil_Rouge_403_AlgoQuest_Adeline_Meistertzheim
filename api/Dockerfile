@@ -19,13 +19,13 @@ RUN mvn -B -e clean verify checkstyle:check
 FROM eclipse-temurin:17-jre-jammy AS runtime
 WORKDIR /app
 
-# Installer tini + docker-cli
 RUN apt-get update && \
     apt-get install -y --no-install-recommends tini docker-cli && \
     rm -rf /var/lib/apt/lists/*
 
-# Créer un utilisateur non-root
-RUN groupadd --system api && useradd --system --create-home --gid api api
+# Créer un utilisateur + groupe docker et lui donner accès au socket
+RUN groupadd --system api && useradd --system --create-home --gid api api && \
+    groupadd -for docker && usermod -aG docker api
 
 # Copier le JAR généré
 COPY --from=builder /app/target/*.jar app.jar
@@ -33,5 +33,4 @@ COPY --chmod=755 entrypoint.sh /app/entrypoint.sh
 
 USER api
 EXPOSE 8080
-
 ENTRYPOINT ["/usr/bin/tini", "--", "/app/entrypoint.sh"]

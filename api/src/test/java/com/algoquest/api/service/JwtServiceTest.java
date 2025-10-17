@@ -1,6 +1,5 @@
 package com.algoquest.api.service;
 
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import org.junit.jupiter.api.Test;
