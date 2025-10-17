@@ -21,7 +21,7 @@ public class JwtService {
     private static final long EXPIRATION_TIME = 86400000; // 24h
 
     private Key getSigningKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+    final byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
     return Keys.hmacShaKeyFor(keyBytes);
 }
     public String generateToken(String userId, String role) {
