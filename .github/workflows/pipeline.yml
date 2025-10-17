@@ -23,6 +23,8 @@ jobs:
           filters: |
             backend:
               - 'api/**'
+              - 'api/Dockerfile'
+              - 'api/Dockerfile.sandbox'
             frontend:
               - 'algoquest-mobile/**'
 
@@ -32,6 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: changes
     if: needs.changes.outputs.backend == 'true'
+
     services:
       mongo:
         image: mongo:latest
@@ -79,13 +82,41 @@ jobs:
           username: admin
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-      - name: Build and Push Docker image
+      - name: Build and Push Backend Docker image
         uses: docker/build-push-action@v5
         with:
           context: ./api
           push: true
           tags: registry.adelinemeistertzheim.fr/algoquest/backend:latest
           cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/backend:buildcache
+          cache-to: type=inline
+
+  # ⚙️ Sandbox build & push (pour le docker-in-docker)
+  sandbox:
+    name: Build and Push Sandbox Image
+    runs-on: ubuntu-latest
+    needs: backend
+    if: needs.changes.outputs.backend == 'true' && needs.backend.result == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to private Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.adelinemeistertzheim.fr
+          username: admin
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and Push sandbox image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: api/Dockerfile.sandbox
+          push: true
+          tags: registry.adelinemeistertzheim.fr/algoquest/sandbox:latest
+          cache-from: type=registry,ref=registry.adelinemeistertzheim.fr/algoquest/sandbox:buildcache
           cache-to: type=inline
 
   # 📱 Frontend build
@@ -131,7 +162,7 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
-    needs: [backend, frontend]
+    needs: [backend, sandbox, frontend]
     if: |
       (needs.backend.result == 'success' || needs.frontend.result == 'success') &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
@@ -149,6 +180,6 @@ jobs:
           script: |
             docker login registry.adelinemeistertzheim.fr -u admin -p '${{ secrets.REGISTRY_PASSWORD }}'
             cd /home/debian/algoquest
-            docker compose pull api
+            docker compose pull
             docker compose down
             docker compose up -d
