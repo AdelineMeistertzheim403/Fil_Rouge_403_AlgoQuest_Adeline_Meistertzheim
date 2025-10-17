@@ -10,10 +10,16 @@ jobs:
   backend:
     name: Build and Push Backend API
     runs-on: ubuntu-latest
-    # 🔹 Ne s’exécute que si les fichiers dans ./api changent
-    if: contains(github.event.head_commit.message, '[force-backend]') ||
-        github.event_name == 'pull_request' ||
-        github.event_name == 'push' && (contains(join(github.event.commits.*.modified, ' '), 'api/') || contains(join(github.event.commits.*.added, ' '), 'api/') || contains(join(github.event.commits.*.removed, ' '), 'api/'))
+    # ✅ Ce job ne s’exécute que si des fichiers du dossier api/ ont été modifiés
+    if: |
+      contains(github.event.head_commit.message, '[force-backend]') ||
+      github.event_name == 'pull_request' ||
+      github.event_name == 'push' && (
+        startsWith(github.event.head_commit.message, 'api/') ||
+        contains(join(toJson(github.event.commits.*.modified), ' '), 'api/') ||
+        contains(join(toJson(github.event.commits.*.added), ' '), 'api/') ||
+        contains(join(toJson(github.event.commits.*.removed), ' '), 'api/')
+      )
 
     services:
       mongo:
@@ -72,12 +78,18 @@ jobs:
           cache-to: type=inline
 
   frontend:
-    runs-on: ubuntu-latest
     name: Build Mobile Front
-    # 🔹 Ne s’exécute que si des fichiers du front changent
-    if: contains(github.event.head_commit.message, '[force-front]') ||
-        github.event_name == 'pull_request' ||
-        github.event_name == 'push' && (contains(join(github.event.commits.*.modified, ' '), 'algoquest-mobile/') || contains(join(github.event.commits.*.added, ' '), 'algoquest-mobile/') || contains(join(github.event.commits.*.removed, ' '), 'algoquest-mobile/'))
+    runs-on: ubuntu-latest
+    # ✅ Ce job ne s’exécute que si des fichiers du dossier algoquest-mobile/ ont été modifiés
+    if: |
+      contains(github.event.head_commit.message, '[force-front]') ||
+      github.event_name == 'pull_request' ||
+      github.event_name == 'push' && (
+        startsWith(github.event.head_commit.message, 'algoquest-mobile/') ||
+        contains(join(toJson(github.event.commits.*.modified), ' '), 'algoquest-mobile/') ||
+        contains(join(toJson(github.event.commits.*.added), ' '), 'algoquest-mobile/') ||
+        contains(join(toJson(github.event.commits.*.removed), ' '), 'algoquest-mobile/')
+      )
 
     steps:
       - name: Checkout repository
