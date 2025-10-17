@@ -178,23 +178,30 @@ jobs:
           if-no-files-found: error
 
   #  Déploiement automatique
-  deploy:
+deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
     needs: [backend, sandbox, frontend]
     if: |
-      (
-        (needs.backend.result == 'success' || needs.backend.result == 'skipped') &&
-        (needs.frontend.result == 'success' || needs.frontend.result == 'skipped') &&
-        (needs.sandbox.result == 'success' || needs.sandbox.result == 'skipped')
-      ) &&
+      always() &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
     steps:
+      - name: 🛑 Skip if nothing was built
+        if: |
+          (
+            (needs.backend.result != 'success') &&
+            (needs.sandbox.result != 'success') &&
+            (needs.frontend.result != 'success')
+          )
+        run: |
+          echo "🟡 Aucun composant n'a été rebuild, déploiement ignoré."
+          exit 0
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH to VPS
+      - name: 🚀 Deploy via SSH to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
