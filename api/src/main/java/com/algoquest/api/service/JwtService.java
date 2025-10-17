@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 
-
 @Service
 public class JwtService {
 
@@ -21,9 +20,10 @@ public class JwtService {
     private static final long EXPIRATION_TIME = 86400000; // 24h
 
     private Key getSigningKey() {
-    final byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-    return Keys.hmacShaKeyFor(keyBytes);
-}
+        final byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
     public String generateToken(String userId, String role) {
         return Jwts.builder()
                 .setSubject(userId)
