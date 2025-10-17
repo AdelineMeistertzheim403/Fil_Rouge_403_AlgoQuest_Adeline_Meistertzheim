@@ -20,19 +20,16 @@ public class CodeRunnerService {
 
     public String runJavaWithDocker(String codeSource, String input) {
         Path tempDir = null;
-
         try {
             // 1. Créer un répertoire temporaire
             final String uniqueId = UUID.randomUUID().toString();
             final Path sharedDir = Paths.get("/tmp/algoquest");
-            if (!Files.exists(sharedDir)) {
-                Files.createDirectories(sharedDir);
-            }
-            tempDir = Files.createTempDirectory(sharedDir, "code-" + uniqueId);
+            Files.createDirectories(sharedDir);
+            tempDir = Files.createTempDirectory(sharedDir, "code-" + uniqueId + "-");
 
             // 2. Écrire le code Java soumis
             final Path javaFile = tempDir.resolve("Main.java");
-            Files.write(javaFile, codeSource.getBytes());
+            Files.writeString(javaFile, codeSource);
 
             // 3. Construire la commande Docker
             final String dockerCmd = String.format(
@@ -41,6 +38,10 @@ public class CodeRunnerService {
                     IMAGE,
                     tempDir.toAbsolutePath(),
                     input == null ? "" : input.replace("'", "'\\''"));
+
+            System.out.println("🧱 CMD => " + dockerCmd);
+            System.out.println("📁 Exists before run? " + Files.exists(tempDir));
+
             // 4. Lancer le process
             final Process process = Runtime.getRuntime().exec(new String[] { "sh", "-c", dockerCmd });
             final boolean finished = process.waitFor(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -50,34 +51,30 @@ public class CodeRunnerService {
                 return "Erreur: Temps d'exécution dépassé (" + TIMEOUT_SECONDS + "s)";
             }
 
-            // 5. Lire la sortie standard et erreurs avec try-with-resources
-            final String output;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                output = reader.lines().collect(Collectors.joining("\n"));
-            }
+            // 5. Lire la sortie
+            String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            String errors = new BufferedReader(new InputStreamReader(process.getErrorStream()))
+                    .lines().collect(Collectors.joining("\n"));
 
-            final String errors;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-                errors = reader.lines().collect(Collectors.joining("\n"));
-            }
+            int exit = process.exitValue();
 
-            final int exitCode = process.exitValue();
-
-            if (exitCode != 0) {
+            if (exit != 0) {
                 return "Erreur d'exécution/compilation:\n" + errors;
             }
-
             return output.isEmpty() ? "(Aucune sortie)" : output;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return "Erreur système: " + e.getMessage();
+
         } finally {
-            // 7. Nettoyer les fichiers temporaires
             if (tempDir != null) {
                 try {
+                    System.out.println("🧹 Nettoyage " + tempDir);
                     Files.walk(tempDir)
                             .map(Path::toFile)
-                            .sorted((a, b) -> -a.compareTo(b)) // supprimer fichiers avant dossiers
+                            .sorted((a, b) -> -a.compareTo(b))
                             .forEach(java.io.File::delete);
                 } catch (IOException ignored) {
                 }
