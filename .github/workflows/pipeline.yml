@@ -187,7 +187,7 @@ jobs:
             (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
         steps:
-        - name: 🛑 Skip if nothing was built
+        - name:  Skip if nothing was built
           if: |
                     (
                         (needs.backend.result != 'success') &&
@@ -195,7 +195,7 @@ jobs:
                         (needs.frontend.result != 'success')
                     )
           run: |
-            echo "🟡 Aucun composant n'a été rebuild, déploiement ignoré."
+            echo " Aucun composant n'a été rebuild, déploiement ignoré."
             exit 0
 
         - name: Checkout repository
