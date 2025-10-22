@@ -64,7 +64,7 @@ jobs:
 
       - name: Build and Run Tests
         working-directory: ./api
-        run: mvn -B clean verify -Dspring.profiles.active=test-ci
+        run: mvn -B clean verify --batch-mode -Dspring.profiles.active=test-ci
 
       - name: Upload JaCoCo Coverage
         uses: actions/upload-artifact@v4
@@ -177,8 +177,7 @@ jobs:
           path: algoquest-mobile/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
 
-  #  Déploiement automatique
-  # 🚀 Déploiement automatique
+  # Déploiement automatique
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
@@ -188,7 +187,7 @@ jobs:
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
 
     steps:
-      - name: 🛑 Skip if nothing was built
+      - name:  Skip if nothing was built
         if: |
           (
             (needs.backend.result != 'success') &&
@@ -196,13 +195,13 @@ jobs:
             (needs.frontend.result != 'success')
           )
         run: |
-          echo "🟡 Aucun composant n'a été rebuild, déploiement ignoré."
+          echo " Aucun composant n'a été rebuild, déploiement ignoré."
           exit 0
 
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🚀 Deploy via SSH to VPS
+      - name:  Deploy via SSH to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -211,7 +210,5 @@ jobs:
           script: |
             docker login registry.adelinemeistertzheim.fr -u admin -p '${{ secrets.REGISTRY_PASSWORD }}'
             cd /home/debian/algoquest
-            docker compose pull
-            docker compose down
-            docker compose up -d
+            docker compose up -d --pull always
 
