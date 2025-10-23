@@ -17,15 +17,16 @@
   const appPassword = readSecret('/run/secrets/mongo_app_password');
 
   // La DB applicative (passée en env dans docker-compose)
-  const appDbName = (process.env.MONGO_APP_DB || 'algoquest').trim();
+  const appDbName = (process.env.MONGO_APP_DB || 'algoquestdb').trim();
 
   // On crée l'utilisateur applicatif avec rôle readWrite sur la DB applicative
-  const admin = db.getSiblingDB('admin');
+  const appDb = db.getSiblingDB(appDbName);
+
 
   print(`Creating app user '${appUser}' with readWrite on '${appDbName}'...`);
 
   try {
-    admin.createUser({
+    appDb.createUser({
       user: appUser,
       pwd: appPassword,
       roles: [

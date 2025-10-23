@@ -1,11 +1,30 @@
 // app/(admin)/dashboard.tsx
 import { globalStyles } from '@/src/styles/globalStyles'
-import { router } from 'expo-router'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { Href, router } from 'expo-router'
+import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import Logo from '../../assets/images/logoAlgoQuest.svg';
 import { LinearGradient } from 'expo-linear-gradient'
+import { useAuth } from '@/src/context/AuthContext';
 
 export default function Dashboard() {
+    const { user, logout } = useAuth()
+    const handleLogout = async () => {
+  Alert.alert(
+    "Déconnexion",
+    "Voulez-vous vraiment vous déconnecter ?",
+    [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Oui",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
+          router.replace("/(auth)/login" as Href);
+        },
+      },
+    ]
+  );
+};
     return (
         <View style={globalStyles.container}>
             <Logo
@@ -44,6 +63,19 @@ export default function Dashboard() {
                     <Text style={globalStyles.buttonText}>Créer une nouvelle énigme</Text>
                 </LinearGradient>
             </TouchableOpacity>
+             <TouchableOpacity
+  style={{
+    backgroundColor: "#E74C3C",
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 10,
+    alignItems: "center",
+  }}
+  onPress={handleLogout}
+>
+  <Text style={{ color: "#fff", fontWeight: "bold" }}>🚪 Se déconnecter</Text>
+</TouchableOpacity>
+
         </View>
     )
 }

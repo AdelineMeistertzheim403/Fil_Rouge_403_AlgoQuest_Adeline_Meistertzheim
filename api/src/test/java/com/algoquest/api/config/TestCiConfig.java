@@ -2,6 +2,8 @@ package com.algoquest.api.config;
 
 import com.algoquest.api.repository.*;
 import com.algoquest.api.service.JwtService;
+import com.algoquest.api.service.RefreshTokenService;
+
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -33,4 +35,10 @@ public class TestCiConfig {
     public JwtService jwtService() {
         return Mockito.mock(JwtService.class);
     }
+
+    @Bean
+@Primary
+public RefreshTokenService refreshTokenService() {
+    return Mockito.mock(RefreshTokenService.class);
+}
 }

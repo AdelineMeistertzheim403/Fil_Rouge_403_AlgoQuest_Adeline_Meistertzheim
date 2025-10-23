@@ -5,6 +5,11 @@ export interface User {
   role: string;
 }
 
-export interface LoginResponse extends User {
-  token: string;
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  id: string;
+  pseudo: string;
+  email: string;
+  role: string;
 }

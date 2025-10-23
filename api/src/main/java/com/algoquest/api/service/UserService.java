@@ -40,11 +40,12 @@ public class UserService {
     }
 
     private UserDTO convertToDTO(User user) {
-        final UserDTO dto = new UserDTO(null, null, null, null);
+        final UserDTO dto = new UserDTO(null, null, null, null,null);
         dto.setId(user.getId());
         dto.setPseudo(user.getPseudo());
         dto.setEmail(user.getEmail());
         dto.setRole(user.getRole());
+        dto.setRefreshToken(user.getRefreshToken());
         return dto;
     }
 

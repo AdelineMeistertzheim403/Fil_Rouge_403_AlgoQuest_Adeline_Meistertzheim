@@ -2,7 +2,11 @@ package com.algoquest.api.controller;
 
 import com.algoquest.api.dto.UserDTO;
 import com.algoquest.api.model.User;
+import com.algoquest.api.service.RefreshTokenService;
 import com.algoquest.api.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 import com.algoquest.api.dto.LoginRequest;
 import com.algoquest.api.dto.AuthResponse;
 
@@ -24,37 +28,68 @@ import java.util.Optional;
 @RequestMapping("api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RefreshTokenService refreshTokenService) {
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     // -------------------
     // Auth
     // -------------------
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody User user) {
+    public ResponseEntity<AuthResponse> register(@RequestBody User user, HttpServletRequest request) {
         final User created = userService.create(user);
-        final String token = userService.generateToken(created);
-        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
-                user.getRole());
+        final String accessToken = userService.generateToken(created);
+        final String refreshToken = refreshTokenService.issueRefreshToken(
+                created,
+                "rn-device",
+                request.getHeader("User-Agent"),
+                request.getRemoteAddr());
+        final AuthResponse response = new AuthResponse(
+                accessToken,
+                created.getId(),
+                created.getPseudo(),
+                created.getEmail(),
+                created.getRole(),
+                refreshToken);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         final Optional<User> userOpt = userService.findByEmailAndPassword(
                 loginRequest.getEmail(),
                 loginRequest.getPassword());
 
-        if (userOpt.isPresent()) {
-            final User user = userOpt.get();
-            final String token = userService.generateToken(user);
-            final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
-                    user.getRole());
-            return ResponseEntity.ok(response);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(401).build();
         }
-        return ResponseEntity.status(401).build();
+
+        final User user = userOpt.get();
+
+        // Génération de l’access token (JWT court)
+        final String accessToken = userService.generateToken(user);
+
+        // Génération du refresh token sécurisé
+        final String refreshToken = refreshTokenService.issueRefreshToken(
+                user,
+                "rn-device", // ou deviceId réel
+                request.getHeader("User-Agent"),
+                request.getRemoteAddr());
+
+        // Retourne les deux
+        final AuthResponse response = new AuthResponse(
+                accessToken,
+                user.getId(),
+                user.getPseudo(),
+                user.getEmail(),
+                user.getRole(),
+                refreshToken // ajoute ce champ à ton DTO
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")
@@ -64,7 +99,8 @@ public class UserController {
             final Optional<User> userOpt = userService.findByToken(token);
             if (userOpt.isPresent()) {
                 final User user = userOpt.get();
-                return ResponseEntity.ok(new UserDTO(user.getId(), user.getPseudo(), user.getEmail(), user.getRole()));
+                return ResponseEntity.ok(new UserDTO(user.getId(), user.getPseudo(), user.getEmail(), user.getRole(),
+                        user.getRefreshToken()));
             }
         }
         return ResponseEntity.status(401).build();
@@ -93,7 +129,7 @@ public class UserController {
     }
 
     @PostMapping("/create-admin")
-    public ResponseEntity<?> createAdmin(@RequestBody User user) {
+    public ResponseEntity<?> createAdmin(@RequestBody User user, HttpServletRequest request) {
         if (userService.existsAdmin()) {
             return ResponseEntity.status(403).body("Un administrateur existe déjà !");
         }
@@ -101,10 +137,15 @@ public class UserController {
         user.setRole("ADMIN");
 
         final User created = userService.create(user);
-        final String token = userService.generateToken(created);
+        final String accessToken = userService.generateToken(created);
+        final String refreshToken = refreshTokenService.issueRefreshToken(
+                created,
+                "rn-device",
+                request.getHeader("User-Agent"),
+                request.getRemoteAddr());
 
-        final AuthResponse response = new AuthResponse(token, user.getId(), user.getPseudo(), user.getEmail(),
-                user.getRole());
+        final AuthResponse response = new AuthResponse(accessToken, user.getId(), user.getPseudo(), user.getEmail(),
+                user.getRole(), refreshToken);
         return ResponseEntity.ok(response);
     }
 }

@@ -1,49 +1,24 @@
 package com.algoquest.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AuthResponse {
-    private String token;
+    private String accessToken;
     private String id;
     private String pseudo;
     private String email;
     private String role;
+    private String refreshToken;
 
-    public AuthResponse(String token, String id, String pseudo, String email, String role) {
-        this.token = token;
+    public AuthResponse(String accessToken, String id, String pseudo, String email, String role, String refreshToken) {
+        this.accessToken = accessToken;
         this.id = id;
         this.pseudo = pseudo;
         this.email = email;
         this.role = role;
-    }
-
-    // --- Getters et setters ---
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
-    }
-    public String getId() {
-        return id;
-    }
-    public void setId(String id) {
-        this.id = id;
-    }
-    public String getPseudo() {
-        return pseudo;
-    }
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    public String getRole() {
-        return role;
-    }
-    public void setRole(String role) {
-        this.role = role;
+        this.refreshToken = refreshToken;
     }
 }
