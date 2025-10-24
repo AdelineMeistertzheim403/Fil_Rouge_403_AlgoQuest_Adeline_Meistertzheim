@@ -34,7 +34,9 @@ class ResolutionControllerIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    @SuppressWarnings("removal")
     @MockBean private ResolutionRepository resolutionRepository;
+    @SuppressWarnings("removal")
     @MockBean private ResolutionService resolutionService;
 
     private Resolution mockResolution;

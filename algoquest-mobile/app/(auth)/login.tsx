@@ -7,12 +7,6 @@ import { globalStyles } from '@/src/styles/globalStyles'
 import Logo from '../../assets/images/logoAlgoQuest.svg'
 import { useAuth } from '@/src/context/AuthContext'
 
-interface User {
-  id: string;
-  pseudo: string;
-  email: string;
-  role: string;
-}
 
 export default function LoginScreen() {
   const router = useRouter();

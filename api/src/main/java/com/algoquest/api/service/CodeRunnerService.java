@@ -52,8 +52,10 @@ public class CodeRunnerService {
             }
 
             // 5. Lire la sortie
+            @SuppressWarnings("resource")
             final String output = new BufferedReader(new InputStreamReader(process.getInputStream()))
                     .lines().collect(Collectors.joining("\n"));
+            @SuppressWarnings("resource")
             final String errors = new BufferedReader(new InputStreamReader(process.getErrorStream()))
                     .lines().collect(Collectors.joining("\n"));
 

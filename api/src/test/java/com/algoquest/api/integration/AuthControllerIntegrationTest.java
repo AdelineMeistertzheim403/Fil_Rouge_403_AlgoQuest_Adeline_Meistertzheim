@@ -39,9 +39,13 @@ class AuthControllerIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    @SuppressWarnings("removal")
     @MockBean private UserRepository userRepository;
+    @SuppressWarnings("removal")
     @MockBean private PasswordEncoder passwordEncoder;
+    @SuppressWarnings("removal")
     @MockBean private JwtService jwtService;
+    @SuppressWarnings("removal")
     @MockBean private RefreshTokenService refreshTokenService;
 
     @Autowired
