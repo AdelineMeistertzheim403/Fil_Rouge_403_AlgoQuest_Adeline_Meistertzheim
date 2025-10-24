@@ -31,6 +31,7 @@ class EnigmeControllerIntegrationTest {
     @Autowired private MockMvc mockMvc;
     @Autowired private ObjectMapper objectMapper;
 
+    @SuppressWarnings("removal")
     @MockBean private EnigmeRepository enigmeRepository;
 
     private Enigme mockEnigme;

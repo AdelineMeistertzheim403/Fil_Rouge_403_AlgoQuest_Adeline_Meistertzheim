@@ -9,7 +9,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, Href } from 'expo-router';
 import { api } from '@/src/api/client';
-import { login as loginService } from '@/services/userService';
 import { globalStyles } from '@/src/styles/globalStyles';
 import Logo from '../../assets/images/logoAlgoQuest.svg';
 import { useAuth } from '@/src/context/AuthContext';

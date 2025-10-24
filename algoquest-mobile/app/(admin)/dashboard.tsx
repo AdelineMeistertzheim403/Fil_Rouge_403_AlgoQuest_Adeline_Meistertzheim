@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from '@/src/context/AuthContext';
 
 export default function Dashboard() {
-    const { user, logout } = useAuth()
+    const { logout } = useAuth()
     const handleLogout = async () => {
   Alert.alert(
     "Déconnexion",
