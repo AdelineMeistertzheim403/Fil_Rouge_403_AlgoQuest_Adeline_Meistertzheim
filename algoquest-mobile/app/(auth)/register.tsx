@@ -13,6 +13,7 @@ import { login as loginService } from '@/services/userService';
 import { globalStyles } from '@/src/styles/globalStyles';
 import Logo from '../../assets/images/logoAlgoQuest.svg';
 import { useAuth } from '@/src/context/AuthContext';
+import { LoginResponse } from '@/types/api';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -23,41 +24,43 @@ export default function RegisterScreen() {
     useAuth()
 
   const handleRegister = async () => {
-    try {
-      // 1️⃣ Création du compte
-      await api.post('/users/register', {
-        pseudo,
-        email,
-        password,
-        role: 'UTILISATEUR',
-      });
+  try {
+    // Création du compte
+    const registerResponse = await api.post<LoginResponse>("/register", {
+      pseudo,
+      email,
+      password,
+      role: 'UTILISATEUR',
+    });
 
-      // 2️⃣ Connexion automatique
-      const data = await loginService(email, password);
+    //  Connexion automatique → mais ici, on reçoit déjà les tokens du register
+    const data = registerResponse.data;
 
-      const { token, ...user } = data;
+    // Extraire les données
+    const { accessToken, refreshToken, ...user } = data;
 
-      // 3️⃣ Sauvegarde locale
-      await AsyncStorage.setItem('user', JSON.stringify(user));
-      await AsyncStorage.setItem('token', token);
+    //  Sauvegarde locale
+    await AsyncStorage.setItem('user', JSON.stringify(user));
+    await AsyncStorage.setItem('accessToken', accessToken);
+    await AsyncStorage.setItem('refreshToken', refreshToken);
 
-      // 4️⃣ Met à jour le contexte global
-      login(user, token);
+    //  Met à jour le contexte global
+    login(user, accessToken);
 
-      // 5️⃣ Message de succès
-      Alert.alert('Inscription réussie', `Bienvenue ${user.pseudo}`);
+    //  Message de succès
+    Alert.alert('Inscription réussie', `Bienvenue ${user.pseudo}`);
 
-      // 6️⃣ Redirection
-      if (user.role === 'ADMIN') {
-        router.replace('/(admin)/dashboard' as Href);
-      } else {
-        router.replace('/(user)/enigmes/listEnigme' as Href);
-      }
-    } catch (err: any) {
-      console.error('Erreur inscription :', err.response?.data || err.message);
-      Alert.alert('Erreur', 'Impossible de créer le compte');
+    //  Redirection
+    if (user.role === 'ADMIN') {
+      router.replace('/(admin)/dashboard' as Href);
+    } else {
+      router.replace('/(user)/enigmes/listEnigme' as Href);
     }
-  };
+  } catch (err: any) {
+    console.error('Erreur inscription :', err.response?.data || err.message);
+    Alert.alert('Erreur', 'Impossible de créer le compte');
+  }
+};
 
   return (
     <View style={globalStyles.container}>

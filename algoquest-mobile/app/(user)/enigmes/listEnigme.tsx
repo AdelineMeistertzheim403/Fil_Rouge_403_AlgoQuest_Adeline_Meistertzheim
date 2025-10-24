@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { globalStyles } from '@/src/styles/globalStyles'
-import { router } from 'expo-router'
+import { Href, router } from 'expo-router'
 import {
     View,
     Text,
@@ -16,7 +16,7 @@ import { useEnigmes } from '@/hooks/useEnigmes'
 import { synchronize } from '@/src/db/sync'
 
 export default function Liste_enigmes() {
-    const { user } = useAuth()
+    const { user, logout } = useAuth()
     const currentUserId = user?.id
     const [syncing, setSyncing] = useState(false)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
@@ -58,6 +58,24 @@ export default function Liste_enigmes() {
         )
     }
 
+    const handleLogout = async () => {
+  Alert.alert(
+    "Déconnexion",
+    "Voulez-vous vraiment vous déconnecter ?",
+    [
+      { text: "Annuler", style: "cancel" },
+      {
+        text: "Oui",
+        style: "destructive",
+        onPress: async () => {
+          await logout();
+          router.replace("/(auth)/login" as Href);
+        },
+      },
+    ]
+  );
+};
+
     const total = enigmes.length
     const reussies = enigmes.filter((e) => e.status === 'REUSSI').length
     const progression = total > 0 ? (reussies / total) * 100 : 0
@@ -90,6 +108,20 @@ export default function Liste_enigmes() {
                     </Text>
                 )}
             </TouchableOpacity>
+
+            <TouchableOpacity
+  style={{
+    backgroundColor: "#E74C3C",
+    borderRadius: 8,
+    padding: 10,
+    marginVertical: 10,
+    alignItems: "center",
+  }}
+  onPress={handleLogout}
+>
+  <Text style={{ color: "#fff", fontWeight: "bold" }}>🚪 Se déconnecter</Text>
+</TouchableOpacity>
+
 
             {/* Liste des énigmes */}
             <FlatList

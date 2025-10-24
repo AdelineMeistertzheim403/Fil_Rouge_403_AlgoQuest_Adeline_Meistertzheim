@@ -4,6 +4,7 @@ import com.algoquest.api.dto.LoginRequest;
 import com.algoquest.api.model.User;
 import com.algoquest.api.repository.UserRepository;
 import com.algoquest.api.service.JwtService;
+import com.algoquest.api.service.RefreshTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +17,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.algoquest.api.config.TestSecurityConfig;
+import com.algoquest.api.controller.UserController;
 import com.algoquest.api.config.TestCiConfig;
 
 import java.util.Optional;
@@ -38,6 +42,15 @@ class AuthControllerIntegrationTest {
     @MockBean private UserRepository userRepository;
     @MockBean private PasswordEncoder passwordEncoder;
     @MockBean private JwtService jwtService;
+    @MockBean private RefreshTokenService refreshTokenService;
+
+    @Autowired
+private UserController userController;
+
+@BeforeEach
+void injectMocks() {
+    ReflectionTestUtils.setField(userController, "refreshTokenService", refreshTokenService);
+}
 
     private User mockUser;
 
@@ -61,6 +74,12 @@ class AuthControllerIntegrationTest {
         Mockito.when(userRepository.save(Mockito.any(User.class))).thenReturn(mockUser);
         Mockito.when(userRepository.findByEmail("adeline@test.fr")).thenReturn(Optional.of(mockUser));
         Mockito.when(userRepository.findByEmail("wrong@test.fr")).thenReturn(Optional.empty());
+        Mockito.when(refreshTokenService.issueRefreshToken(Mockito.any(),Mockito.anyString(),Mockito.anyString() , Mockito.anyString())).thenReturn("fake-refresh-token");
+        Mockito.doAnswer(invocation -> {
+    System.out.println("✅ RefreshTokenService mock called!");
+    return "fake-refresh-token";
+}).when(refreshTokenService)
+  .issueRefreshToken(Mockito.any(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
@@ -71,13 +90,21 @@ class AuthControllerIntegrationTest {
         newUser.setEmail("adeline@test.fr");
         newUser.setPassword("1234");
 
+        MvcResult result = mockMvc.perform(post("/api/v1/users/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(newUser)))
+        .andReturn();
+
+System.out.println("🔍 Response JSON = " + result.getResponse().getContentAsString());
+
         mockMvc.perform(post("/api/v1/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("fake-jwt-token"))
-                .andExpect(jsonPath("$.email").value("adeline@test.fr"))
-                .andExpect(jsonPath("$.pseudo").value("Adeline"));
+                .andExpect(jsonPath("$.accessToken").value("fake-jwt-token"))
+.andExpect(jsonPath("$.refreshToken").doesNotExist())
+.andExpect(jsonPath("$.email").value("adeline@test.fr"))
+.andExpect(jsonPath("$.pseudo").value("Adeline"));
 
         //  Connexion
         LoginRequest loginRequest = new LoginRequest();
@@ -88,7 +115,8 @@ class AuthControllerIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(loginRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("fake-jwt-token"))
+                .andExpect(jsonPath("$.accessToken").value("fake-jwt-token"))
+                .andExpect(jsonPath("$.refreshToken").doesNotExist())
                 .andExpect(jsonPath("$.pseudo").value("Adeline"));
     }
 

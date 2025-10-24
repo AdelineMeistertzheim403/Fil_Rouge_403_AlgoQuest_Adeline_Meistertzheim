@@ -10,4 +10,5 @@ public class UserDTO {
     private String pseudo;
     private String email;
     private String role;
+    private String refreshToken;
 }

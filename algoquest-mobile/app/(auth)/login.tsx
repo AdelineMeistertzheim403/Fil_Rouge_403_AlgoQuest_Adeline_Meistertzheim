@@ -22,23 +22,32 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     try {
-      const data: User & { token: string } = await loginService(email, password);
-      const { token, ...userData } = data;
+      // 1️⃣ Appel à l’API
+      const data = await loginService(email, password);
 
-      await AsyncStorage.setItem('user', JSON.stringify(userData));
-      await AsyncStorage.setItem('token', token);
+      // 2️⃣ Extraire les tokens
+      const { accessToken, refreshToken, ...userData } = data;
 
-      login(userData, token);
-      Alert.alert('Connexion réussie', `Bienvenue ${userData.pseudo}`);
+      // 3️⃣ Sauvegarde locale
+      await AsyncStorage.setItem("user", JSON.stringify(userData));
+      await AsyncStorage.setItem("accessToken", accessToken);
+      await AsyncStorage.setItem("refreshToken", refreshToken);
 
-      if (userData.role === 'ADMIN') {
-        router.replace('/(admin)/dashboard' as Href);
+      // 4️⃣ Mise à jour du contexte global
+      login(userData, accessToken);
+
+      // 5️⃣ Message de succès
+      Alert.alert("Connexion réussie", `Bienvenue ${userData.pseudo}`);
+
+      // 6️⃣ Redirection selon le rôle
+      if (userData.role === "ADMIN") {
+        router.replace("/(admin)/dashboard" as Href);
       } else {
-        router.replace('/(user)/enigmes/listEnigme' as Href);
+        router.replace("/(user)/enigmes/listEnigme" as Href);
       }
     } catch (err: any) {
-      console.error('Erreur de connexion :', err.response?.data || err.message);
-      Alert.alert('Erreur', 'Identifiants incorrects ou problème de connexion');
+      console.error("Erreur de connexion :", err.response?.data || err.message);
+      Alert.alert("Erreur", "Identifiants incorrects ou problème de connexion");
     }
   };
 
