@@ -181,7 +181,7 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
-    needs: [backend, sandbox, frontend]
+    needs: [backend, sandbox]
     if: |
       always() &&
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
@@ -191,8 +191,7 @@ jobs:
         if: |
           (
             (needs.backend.result != 'success') &&
-            (needs.sandbox.result != 'success') &&
-            (needs.frontend.result != 'success')
+            (needs.sandbox.result != 'success')
           )
         run: |
           echo " Aucun composant n'a été rebuild, déploiement ignoré."
