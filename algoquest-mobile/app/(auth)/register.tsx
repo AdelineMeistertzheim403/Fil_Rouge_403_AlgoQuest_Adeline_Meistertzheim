@@ -25,7 +25,7 @@ export default function RegisterScreen() {
   const handleRegister = async () => {
   try {
     // Création du compte
-    const registerResponse = await api.post<LoginResponse>("/register", {
+    const registerResponse = await api.post<LoginResponse>("/users/register", {
       pseudo,
       email,
       password,
