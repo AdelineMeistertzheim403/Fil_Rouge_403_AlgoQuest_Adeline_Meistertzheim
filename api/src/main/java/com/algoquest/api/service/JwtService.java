@@ -3,7 +3,6 @@ package com.algoquest.api.service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,8 @@ public class JwtService {
     private static final long EXPIRATION_TIME = 86400000; // 24h
 
     private Key getSigningKey() {
-    return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
-}
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String userId, String role) {
         return Jwts.builder()
