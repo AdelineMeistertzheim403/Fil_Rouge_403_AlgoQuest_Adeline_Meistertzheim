@@ -1,24 +1,21 @@
 import { api } from "../src/api/client";
 import { LoginResponse, User } from "../types/api";
-import axios from "axios";
+
 
 // ✅ Connexion utilisateur
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  const response = await axios.post<LoginResponse>(
-    "http://10.0.2.2:8080/api/v1/users/login",
-    { email, password },
-    { headers: { "Content-Type": "application/json" } }
+  const response = await api.post<LoginResponse>(
+    "/users/login",
+    { email, password }
   );
   console.log("LOGIN RESPONSE:", response.data);
   return response.data;
 };
-
 // ✅ Inscription utilisateur
 export const register = async (pseudo: string, email: string, password: string): Promise<LoginResponse> => {
-  const response = await axios.post<LoginResponse>(
-    "http://10.0.2.2:8080/api/v1/users/register",
-    { pseudo, email, password },
-    { headers: { "Content-Type": "application/json" } }
+  const response = await api.post<LoginResponse>(
+    "/users/register",
+    { pseudo, email, password }
   );
   console.log("REGISTER RESPONSE:", response.data);
   return response.data;

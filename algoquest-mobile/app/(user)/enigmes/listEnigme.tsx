@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { globalStyles } from '@/src/styles/globalStyles'
 import { Href, router } from 'expo-router'
 import {
@@ -15,12 +15,73 @@ import { useAuth } from '@/src/context/AuthContext'
 import { useEnigmes } from '@/hooks/useEnigmes'
 import { synchronize } from '@/src/db/sync'
 
-export default function Liste_enigmes() {
+export default function ListEnigme() {
     const { user, logout } = useAuth()
     const currentUserId = user?.id
     const [syncing, setSyncing] = useState(false)
+    const [isConnected, setIsConnected] = useState(true)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
     const { enigmes, loading } = useEnigmes(refreshTrigger)
+
+   useEffect(() => {
+  let isMounted = true;
+
+  const checkNetwork = async () => {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 4000);
+      const response = await fetch('https://clients3.google.com/generate_204', {
+        method: 'GET',
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (isMounted) setIsConnected(response.ok);
+    } catch {
+      if (isMounted) setIsConnected(false);
+    }
+  };
+
+  checkNetwork();
+
+  // 🔁 Vérifie toutes les 10 secondes
+  const interval = setInterval(checkNetwork, 10000);
+  return () => {
+    isMounted = false;
+    clearInterval(interval);
+  };
+}, []);
+
+
+
+    useEffect(() => {
+        if (!currentUserId) return
+
+        const runSync = async () => {
+            if (!isConnected) {
+                console.log("Hors ligne : synchro reportée.")
+                return
+            }
+            try {
+                setSyncing(true)
+                await synchronize(currentUserId)
+                setRefreshTrigger((p) => p + 1)
+                console.log("Synchro automatique terminée")
+            } catch (err) {
+                console.error("Erreur lors de la synchro automatique :", err)
+            } finally {
+                setSyncing(false)
+            }
+        }
+
+        //  Synchro au montage
+        runSync()
+
+        //  Synchro toutes les 60 secondes
+        const interval = setInterval(runSync, 60000)
+        return () => clearInterval(interval)
+    }, [currentUserId, isConnected])
+
+
 
     const getButtonColor = (status?: string) => {
         switch (status) {
@@ -33,23 +94,6 @@ export default function Liste_enigmes() {
         }
     }
 
-    const handleSynchronize = async () => {
-  if (!currentUserId) return;
-  setSyncing(true);
-  requestAnimationFrame(async () => {
-    try {
-      await synchronize(currentUserId);
-      setRefreshTrigger(p => p + 1);
-      Alert.alert('✅ Synchro terminée');
-    } catch (e) {
-      Alert.alert('❌ Erreur synchro');
-      console.error(e);
-    } finally {
-      setSyncing(false);
-    }
-  });
-};
-
     if (loading) {
         return (
             <View style={globalStyles.container}>
@@ -59,22 +103,18 @@ export default function Liste_enigmes() {
     }
 
     const handleLogout = async () => {
-  Alert.alert(
-    "Déconnexion",
-    "Voulez-vous vraiment vous déconnecter ?",
-    [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Oui",
-        style: "destructive",
-        onPress: async () => {
-          await logout();
-          router.replace("/(auth)/login" as Href);
-        },
-      },
-    ]
-  );
-};
+        Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?', [
+            { text: 'Annuler', style: 'cancel' },
+            {
+                text: 'Oui',
+                style: 'destructive',
+                onPress: async () => {
+                    await logout()
+                    router.replace('/(auth)/login' as Href)
+                },
+            },
+        ])
+    }
 
     const total = enigmes.length
     const reussies = enigmes.filter((e) => e.status === 'REUSSI').length
@@ -88,40 +128,53 @@ export default function Liste_enigmes() {
             </Text>
             <Text style={globalStyles.title}>Liste des énigmes</Text>
 
-            {/* Bouton Synchroniser */}
+            {/* Indicateur synchro */}
+            {syncing && (
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginVertical: 10,
+                    }}
+                >
+                    <ActivityIndicator color="#5DADE2" />
+                    <Text style={{ marginLeft: 8 }}>
+                        Synchronisation en cours...
+                    </Text>
+                </View>
+            )}
+
+            {/*Indicateur hors ligne */}
+            {!isConnected && (
+                <View
+                    style={{
+                        backgroundColor: '#f39c12',
+                        padding: 10,
+                        borderRadius: 8,
+                        marginVertical: 10,
+                    }}
+                >
+                    <Text style={{ color: '#fff', textAlign: 'center' }}>
+                        ⚠️ Mode hors ligne — les données seront synchronisées dès que vous serez reconnecté.
+                    </Text>
+                </View>
+            )}
+
+
             <TouchableOpacity
                 style={{
-                    backgroundColor: '#5DADE2',
+                    backgroundColor: '#E74C3C',
                     borderRadius: 8,
                     padding: 10,
                     marginVertical: 10,
                     alignItems: 'center',
                 }}
-                onPress={handleSynchronize}
-                disabled={syncing}
+                onPress={handleLogout}
             >
-                {syncing ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={{ color: '#fff', fontWeight: 'bold' }}>
-                        🔄 Synchroniser
-                    </Text>
-                )}
+                <Text style={{ color: '#fff', fontWeight: 'bold' }}>
+                    🚪 Se déconnecter
+                </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity
-  style={{
-    backgroundColor: "#E74C3C",
-    borderRadius: 8,
-    padding: 10,
-    marginVertical: 10,
-    alignItems: "center",
-  }}
-  onPress={handleLogout}
->
-  <Text style={{ color: "#fff", fontWeight: "bold" }}>🚪 Se déconnecter</Text>
-</TouchableOpacity>
-
 
             {/* Liste des énigmes */}
             <FlatList
